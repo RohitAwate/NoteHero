@@ -102,6 +102,9 @@
 #### Notes View
 ![Notes Mockup](assets/mockups/NotesView.svg)
 
+#### Git Build Banners
+![GitHub Banners](assets/mockups/GitHubBanners.svg)
+
 ## Front Matter Specification
 _Work in progress_
 

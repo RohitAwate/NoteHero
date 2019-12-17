@@ -102,8 +102,12 @@
 - Check mockup below.
 
 ## Mockups
+
+#### Homepage
+![Homepage Mockup](assets/mockups/Homepage.svg)
+
 #### Notes View
-![Notes Mockup](assets/NoteMockup.svg)
+![Notes Mockup](assets/mockups/NotesView.svg)
 
 ## Front Matter Specification
 

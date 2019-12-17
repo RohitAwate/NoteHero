@@ -49,9 +49,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.14468942"
-     inkscape:cx="1278.5459"
-     inkscape:cy="2011.7739"
+     inkscape:zoom="0.28937884"
+     inkscape:cx="1613.7466"
+     inkscape:cy="1458.8655"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -110,7 +110,7 @@
        cy="-385.42917"
        r="19.049999" />
     <rect
-       style="fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#666666;fill-opacity:1;stroke:none;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect848"
        width="516.46667"
        height="34.924999"
@@ -128,7 +128,7 @@
          id="tspan850"
          x="390.52496"
          y="-380.22217"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.63888889px;font-family:'Product Sans';-inkscape-font-specification:'Product Sans';fill:#666666;stroke-width:0.26458332">Type anything to search</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.63888889px;font-family:'Product Sans';-inkscape-font-specification:'Product Sans';fill:#e6e6e6;stroke-width:0.26458332;fill-opacity:1">Type anything to search</tspan></text>
     <rect
        style="fill:#d35f5f;fill-opacity:1;stroke:none;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect854"

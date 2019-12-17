@@ -44,14 +44,10 @@
         "index": 2,
         "timestamp": "2018-05-06 05:45:12",
         "body": "Add citation"
-    },
-
-    .
-    .
-    .
+    }
 ]
 ```
-- [`rangeStart`, `rangeEnd`]: 1inclusive limits of the range of data over which the comment is applied
+- [`rangeStart`, `rangeEnd`]: inclusive limits of the range of data over which the comment is applied
 - `index`: the index of the comment among the list of all comments for that line
 - `timestamp`: the time instance when the comment was made
 - `body`: the actual textual content of the comment 
@@ -75,11 +71,7 @@
             "rangeEnd": 15,
             "timestamp": "2018-05-06 05:45:12",
             "body": "Add citation"
-        },
-
-        .
-        .
-        .
+        }
     ]
 }
 ```
@@ -92,6 +84,7 @@
 - Expected fields:
     - `username`: username in plaintext
     - `password`: hashed password _(refer: https://stackoverflow.com/a/48161723)_
+    - `csrf_token`: CSRF token injected by server into webpage
 - Response places session cookie in the browser.
 
 #### `GET /logout`
@@ -110,7 +103,16 @@
 ![Notes Mockup](assets/mockups/NotesView.svg)
 
 ## Front Matter Specification
+_Work in progress_
 
 ## Implementation Guidelines
+_Work in progress_
 
 ## Keybindings
+
+| Action | Keybinding |
+| - | - |
+| Ctrl + Shift + M | Add comment on line |
+| Ctrl + Shift + F | Focus fuzzy search box |
+
+_Work in progress_

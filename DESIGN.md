@@ -10,7 +10,7 @@
 6. On an HTTP request, the fully rendered page is returned in the response. NoteHero also establishes a WebSocket connection with the browser. This is used to push update notifications in case a new commit is pushed whilst NoteHero is already running in the browser.
 
 ## Server Endpoints
-####  `POST /refresh`
+####  `POST /rebuild`
 - This is the endpoint invoked by the webhook registered on the Git service. It is invoked when there is a new push.
 - Only accepts requests from the Git service.
 - Requires a mutex lock to prevent data races while rendering HTML and building the search index.
@@ -106,7 +106,36 @@
 ![GitHub Banners](assets/mockups/GitHubBanners.svg)
 
 ## Front Matter Specification
-_Work in progress_
+```yaml
+---
+notehero:
+    title: 'Convolutional Neural Networks'
+    sudo: false
+    slug: 'cnn'
+    categories: 'CS > Deep Learning'
+---
+```
+
+NoteHero's rendering and search indexing can be configured by adding the above block of YAML Front Matter at the beginning of your note.
+
+- `title` (String, _required_): Applied to the `<title>` tag in the rendered HTML.
+- `sudo` (Boolean, _optional_): Defines the visibility of the note. If `true`, note is only visible when logged in, else it is publicly visible. **Defaults to `true`**.
+- `slug` (String, _optional_): Used in the URL of the final note. The format of the URL is as follows: `/cat1/cat2/.../catn/slug` where `cat1`, `cat2`, etc. are the `categories` in the YAML Front Matter.
+\
+**Default behaviour is as follows:**
+    - **For camel-case filenames**:
+    Extension is omitted. The individual words from are separated, converted to lower-cased and then concatenated by adding hyphens in the middle.
+    For example, `HelloWorld.md` becomes `hello-world`.
+    - **For snake-case filenames**:
+    Extension is omitted. Underscores are replaced with hyphens.
+    For example, `hello_world.md` becomes `hello-world`.
+    - **For filenames with spaces**:
+    Extension is omitted. Spaces are replaced with hyphens. Entire string is converted to lowercase.
+    For example, `Hello world.md` becomes `hello-world`.
+- `categories` (String, _optional_): Categories should separated by > i.e. closing angle bracket and written left to right in decreasing order of hierarchy. For example, refer the above example. Categories are included in the search index and used to organize the notes in a hierarchy, as shown in the homepage mockup. \
+**Defaults to no categories and thus uses the URL `/slug`, if not already claimed. If claimed, a build error results.**
+
+Attributes marked as _required_, if not provided in the YAML Front Matter, will result in a build error.
 
 ## Implementation Guidelines
 _Work in progress_

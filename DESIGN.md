@@ -102,7 +102,11 @@
 - Check mockup below.
 
 ## Mockups
+#### Notes View
+![Notes Mockup](assets/NoteMockup.svg)
 
 ## Front Matter Specification
 
 ## Implementation Guidelines
+
+## Keybindings

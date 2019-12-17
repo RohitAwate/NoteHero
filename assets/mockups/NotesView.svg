@@ -51,9 +51,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.28937884"
-     inkscape:cx="2602.4213"
-     inkscape:cy="1234.597"
+     inkscape:zoom="0.57875768"
+     inkscape:cx="3741.0671"
+     inkscape:cy="681.68857"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -79,13 +79,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,423)">
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect838"
-       width="656.16669"
-       height="462.49167"
-       x="92.074997"
-       y="-329.53336" />
     <image
        y="-311.875"
        x="-105.77362"
@@ -95,8 +88,7 @@
        preserveAspectRatio="none"
        height="660.93018"
        width="1491.5472"
-       clip-path="url(#clipPath942)"
-       transform="translate(0,-9.6977721)" />
+       clip-path="url(#clipPath942)" />
     <rect
        style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.93416142;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect834"
@@ -208,7 +200,7 @@
    id="tspan870">Parallel Algorithms: Sorting and Graph</tspan></tspan></text>
     <g
        id="g849"
-       transform="translate(-0.45715736,-12.800406)">
+       transform="translate(-0.45715736,-3.6572588)">
       <rect
          ry="4.99999"
          rx="4.99999"
@@ -253,11 +245,11 @@
            sodipodi:role="line">Sat, 12 Jan, 2019 16:00 </tspan></text>
     </g>
     <rect
-       style="fill:#ffff00;fill-opacity:0.39634148;stroke:none;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.0914634"
+       style="fill:#ffff00;fill-opacity:0.39634148;stroke:none;stroke-width:0.80140328;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.0914634"
        id="rect1844"
-       width="398.64124"
+       width="400.04099"
        height="16.91482"
        x="331.43909"
-       y="29.105761" />
+       y="38.248909" />
   </g>
 </svg>

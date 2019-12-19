@@ -9,6 +9,8 @@
 5. NoteHero renders the modified/new notes to HTML and builds the search index.
 6. On an HTTP request, the fully rendered page is returned in the response. NoteHero also establishes a WebSocket connection with the browser. This is used to push update notifications in case a new commit is pushed whilst NoteHero is already running in the browser.
 
+---
+
 ## Server Endpoints
 ####  `POST /rebuild`
 - This is the endpoint invoked by the webhook registered on the Git service. It is invoked when there is a new push.
@@ -94,16 +96,24 @@
 - Delivers the homepage.
 - Check mockup below.
 
+---
+
 ## Mockups
 
 #### Homepage
 ![Homepage Mockup](assets/mockups/Homepage.svg)
 
+---
+
 #### Notes View
 ![Notes Mockup](assets/mockups/NotesView.svg)
 
+---
+
 #### Git Build Banners
 ![GitHub Banners](assets/mockups/GitHubBanners.svg)
+
+---
 
 ## Front Matter Specification
 ```yaml
@@ -133,12 +143,40 @@ NoteHero's rendering and search indexing can be configured by adding the above b
     Extension is omitted. Spaces are replaced with hyphens. Entire string is converted to lowercase.
     For example, `Hello world.md` becomes `hello-world`.
 - `categories` (String, _optional_): Categories should separated by > i.e. closing angle bracket and written left to right in decreasing order of hierarchy. For example, refer the above example. Categories are included in the search index and used to organize the notes in a hierarchy, as shown in the homepage mockup. \
-**Defaults to no categories and thus uses the URL `/slug`, if not already claimed. If claimed, a build error results.**
+**Default behaviour depends on the location of the Markdown source file:**
+    - If it is nested within directories inside the `notes/` directory, the names of the directories are used for the categories. The hierarchy of the directory structure is maintained. For example, if the file is located in `notes/Math/Calculus/Differentiation/`, then the categories are as `Math > Calculus > Differentiation`.
+    - If it is located in `notes/`, then no categories are added to the note. This may cause conflicts while generating URLs.
 
 Attributes marked as _required_, if not provided in the YAML Front Matter, will result in a build error.
 
+---
+
 ## Implementation Guidelines
-_Work in progress_
+### Rendering Algorithm
+1. Within the root directory of the cloned Git repository, look for the `notes/` directory. If not found, append to the build error log and quit.
+2. Recursively traverse all directories within `notes/` and generate a list containing the candidates for rendering. Each entry in the list must contain the full path to the file from the `notes/` directory. This is useful for resolving issues related to an absent `categories` attribute in the YAML Front Matter.
+3. Invoke the renderer for each file on the list.
+    1. Parse the YAML Front Matter _(see algorithm below)_ and store it in an associated object.
+    2. Retrieve the substring containing just the Markdown, without the YAML Front Matter.
+    3. Render the above string of Markdown code to HTML.
+    4. Re-organize the comments. _(see algorithm below)_
+    4. Add `<title>` tag based on YAML Front Matter.
+    5. Save to database along with YAML Front Matter.
+    6. Add title, text-content of notes (stripped of Markdown syntax, refer [StackOverflow](https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text)), and categories to search index.
+
+### YAML Front Matter Parsing Algorithm
+1. Find the opening and closing `---` delimiters for the YAML Front Matter. If none or just one of the delimiters are found, return a RenderConfig object initialized with default values and append to build info log.
+2. Parse the entire block of YAML.
+3. Find the `notehero` object in the parse tree. If not found, return a RenderConfig object initialized with default values and append to build info log.
+4. If found, return a RenderConfig object initialized with values from this YAML object.
+
+### Search Index Format
+
+### Comments Re-Organization Algorithm
+
+### API Specification
+
+### Database Design
 
 ## Keybindings
 

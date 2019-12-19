@@ -112,6 +112,11 @@
 
 #### Git Build Banners
 ![GitHub Banners](assets/mockups/GitHubBanners.svg)
+_TODO: Add a banner for when the user is notified of a new build whilst they're on NoteHero already._
+
+---
+
+#### TODO: Navigation Bar Options
 
 ---
 
@@ -162,7 +167,9 @@ Attributes marked as _required_, if not provided in the YAML Front Matter, will 
     4. Re-organize the comments. _(see algorithm below)_
     4. Add `<title>` tag based on YAML Front Matter.
     5. Save to database along with YAML Front Matter.
-    6. Add title, text-content of notes (stripped of Markdown syntax, refer [StackOverflow](https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text)), and categories to search index.
+    6. Add title, text-content of notes (stripped of Markdown syntax), and categories to search index.
+
+---
 
 ### YAML Front Matter Parsing Algorithm
 1. Find the opening and closing `---` delimiters for the YAML Front Matter. If none or just one of the delimiters are found, return a `NoteConfig` object initialized with default values and append to build info log.
@@ -170,14 +177,47 @@ Attributes marked as _required_, if not provided in the YAML Front Matter, will 
 3. Find the `notehero` object in the parse tree. If not found, return a `NoteConfig` object initialized with default values and append to build info log.
 4. If found, return a `NoteConfig` object initialized with values from this YAML object.
 
-### Search Index Format
+---
 
+### Search Engine Implementation
+The search engine needs to perform two jobs: **index building** and **query processing**.
 
-### Comments Re-Organization Algorithm
+#### Index Building Algorithm
+1. The modified/new Markdown source files should be converted to plain text (refer [StackOverflow](https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text)). _This approach retains multiline code blocks._
+2. Each file is then tokenized. The location of the token in the file is attached to it (line number, start and end of range). All tokens are then stemmed. This step should be parallelized for each file.
+3. Block until all files complete Step 2.
+4. This step calculates the term-frequency, inverse document frequency score (TF-IDF) for each of file's tokens. The results are stored in a hash table with the key as the token and its value being an object containing the following:
+    - The key's TF-IDF score
+    - The list of documents that the key is found in. Each entry in this list contains a list which stores the location information from the token for all instances in a document.
+5. Next we calculate the Index Discard Threshold (IDT), a numeric value. Any tokens in the hash table from Step 4 with a value lower than IDT must be removed. This hash table powers the search in our engine.
+6. A trie data structure is built out of the keys remaining in the hash table. This powers autocomplete in our engine.
+7. The hash table and the trie are stored and accessed in memory. Binary representations are also stored to disk that can be used on subsequent server reloads without rebuilding the index.
 
-### API Specification
+#### Query Algorithm
+1. We first need to generate a set of candidate words for searching in our index. These come from the search query itself and also the autocomplete trie.
+2. Tokenize and stem the query and add the resultant tokens to the candidate set.
+3. For each of these words, find autocomplete suggestions from the trie. For each of these suggestions, perform tokenization followed by stemming and finally add them to the candidate set.
+4. For each word in the candidate list find the corresponding value from the search index hash table. Add it to the pooling list.
+5. Each member of the pooling list will contain a TF-IDF score and a set of documents containing the query along with its locations in that query. Thus, we need to find the union of these document sets.
+6. Return the union set.
 
-### Database Design
+**Alternative for Steps 5 and 6:** \
+In case the performance of the above system is poor, we can get rid of the unionization algorithm.
+- We iterate over the list of documents that each word in our candidate set appears in. We get these from the search index hash table.
+- The document name is set as the key for each entry.
+- If a key does not exist in the table, we add it with its value set to the token's TF-IDF score.
+- If it does exist, its value is incremented by 1.
+- Finally, this hash table is returned.
+
+### TODO: Index Discard Threshold
+
+### TODO: Comments Re-Organization Algorithm
+
+### TODO: API Specification
+
+### TODO: Database Design
+
+### TODO: Server Startup
 
 ## Keybindings
 

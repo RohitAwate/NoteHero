@@ -1,5 +1,5 @@
 # NoteHero
-NoteHero is a web application for managing, annotating, searching and viewing your notes.
+NoteHero is a web application for building, viewing, organizing, searching and annotating your notes.
 
 ## Features
 - **Markdown + mermaid.js + KaTeX**: Use the syntax-light Markdown for textual content, draw sophisticated diagrams with mermaid.js and write that math beautifully  with KaTeX. You'll want to stare at your notes all day.

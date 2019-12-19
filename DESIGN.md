@@ -147,7 +147,7 @@ NoteHero's rendering and search indexing can be configured by adding the above b
     - If it is nested within directories inside the `notes/` directory, the names of the directories are used for the categories. The hierarchy of the directory structure is maintained. For example, if the file is located in `notes/Math/Calculus/Differentiation/`, then the categories are as `Math > Calculus > Differentiation`.
     - If it is located in `notes/`, then no categories are added to the note. This may cause conflicts while generating URLs.
 
-Attributes marked as _required_, if not provided in the YAML Front Matter, will result in a build error.
+Attributes marked as _required_, if not provided in the YAML Front Matter, will result in a build error. NoteHero parses the Front Matter and returns a `NoteConfig` object initialized with values from the parse tree.
 
 ---
 
@@ -165,12 +165,13 @@ Attributes marked as _required_, if not provided in the YAML Front Matter, will 
     6. Add title, text-content of notes (stripped of Markdown syntax, refer [StackOverflow](https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text)), and categories to search index.
 
 ### YAML Front Matter Parsing Algorithm
-1. Find the opening and closing `---` delimiters for the YAML Front Matter. If none or just one of the delimiters are found, return a RenderConfig object initialized with default values and append to build info log.
+1. Find the opening and closing `---` delimiters for the YAML Front Matter. If none or just one of the delimiters are found, return a `NoteConfig` object initialized with default values and append to build info log.
 2. Parse the entire block of YAML.
-3. Find the `notehero` object in the parse tree. If not found, return a RenderConfig object initialized with default values and append to build info log.
-4. If found, return a RenderConfig object initialized with values from this YAML object.
+3. Find the `notehero` object in the parse tree. If not found, return a `NoteConfig` object initialized with default values and append to build info log.
+4. If found, return a `NoteConfig` object initialized with values from this YAML object.
 
 ### Search Index Format
+
 
 ### Comments Re-Organization Algorithm
 

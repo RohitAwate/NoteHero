@@ -217,6 +217,8 @@ In case the performance of the above system is poor, we can get rid of the union
 
 ---
 
+### TODO: TF-IDF Algorithm
+
 ### TODO: Comments Re-Organization Algorithm
 
 ### TODO: API Specification

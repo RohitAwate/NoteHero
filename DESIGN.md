@@ -157,16 +157,19 @@ Attributes marked as _required_, if not provided in the YAML Front Matter, will 
 ---
 
 ## Implementation Guidelines
+
+![Flowchart for Rendering and Search Index Building](assets/RenderSearchIndexFlowchart.svg)
+
 ### Rendering Algorithm
 1. Within the root directory of the cloned Git repository, look for the `notes/` directory. If not found, append to the build error log and quit.
-2. Recursively traverse all directories within `notes/` and generate a list containing the candidates for rendering. Each entry in the list must contain the full path to the file from the `notes/` directory. This is useful for resolving issues related to an absent `categories` attribute in the YAML Front Matter.
+2. From the Git commit data, find all Markdown files from `notes/` and generate a list containing the candidates for rendering. Each entry in the list must contain the full path to the file from the `notes/` directory. This is useful for resolving issues related to an absent `categories` attribute in the YAML Front Matter.
 3. Invoke the renderer for each file on the list.
     1. Parse the YAML Front Matter _(see algorithm below)_ and store it in an associated object.
     2. Retrieve the substring containing just the Markdown, without the YAML Front Matter.
     3. Render the above string of Markdown code to HTML.
     4. Re-organize the comments. _(see algorithm below)_
     4. Add `<title>` tag based on YAML Front Matter.
-    5. Save to database along with YAML Front Matter.
+    5. Save HTML to disk YAML Front Matter to the database.
     6. Add title, text-content of notes (stripped of Markdown syntax), and categories to search index.
 
 ---
@@ -184,14 +187,17 @@ The search engine needs to perform two jobs: **index building** and **query proc
 
 #### Index Building Algorithm
 1. The modified/new Markdown source files should be converted to plain text (refer [StackOverflow](https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text)). _This approach retains multiline code blocks._
-2. Each file is then tokenized. The location of the token in the file is attached to it (line number, start and end of range). All tokens are then stemmed. This step should be parallelized for each file.
+2. Each file is then tokenized. The location of the token in the file is attached to it (line number, start and end of range). Stopword tokens are removed and the remaining are then stemmed. This step should be parallelized for each file.
 3. Block until all files complete Step 2.
-4. This step calculates the term-frequency, inverse document frequency score (TF-IDF) for each of file's tokens. The results are stored in a hash table with the key as the token and its value being an object containing the following:
-    - The key's TF-IDF score
-    - The list of documents that the key is found in. Each entry in this list contains a list which stores the location information from the token for all instances in a document.
-5. Next we calculate the Index Discard Threshold (IDT), a numeric value. Any tokens in the hash table from Step 4 with a value lower than IDT must be removed. This hash table powers the search in our engine.
-6. A trie data structure is built out of the keys remaining in the hash table. This powers autocomplete in our engine.
-7. The hash table and the trie are stored and accessed in memory. Binary representations are also stored to disk that can be used on subsequent server reloads without rebuilding the index.
+4. This step calculates the term-frequency, inverse document frequency score (TF-IDF) for each of the file's tokens. The results are stored in a hash table with the key as the token and its value being an object containing the following:
+    - The list of documents containing the key.
+    - Each document in this list also contains the corresponding TF-IDF score of that token for that document.
+    - It also contains a list of all the locations in itself where the token appears.
+
+![Search Index Hash Table Schema](assets/SearchIndexHashTable.svg)
+
+5. A trie data structure is built out of the keys in the hash table. This powers autocomplete in our engine.
+6. The hash table and the trie are stored and accessed in memory. Binary representations are also stored to disk that can be used on subsequent server reloads without rebuilding the index.
 
 #### Query Algorithm
 1. We first need to generate a set of candidate words for searching in our index. These come from the search query itself and also the autocomplete trie.
@@ -209,7 +215,7 @@ In case the performance of the above system is poor, we can get rid of the union
 - If it does exist, its value is incremented by 1.
 - Finally, this hash table is returned.
 
-### TODO: Index Discard Threshold
+---
 
 ### TODO: Comments Re-Organization Algorithm
 
@@ -223,7 +229,7 @@ In case the performance of the above system is poor, we can get rid of the union
 
 | Action | Keybinding |
 | - | - |
-| Ctrl + Shift + M | Add comment on line |
-| Ctrl + Shift + F | Focus fuzzy search box |
+| Ctrl + Alt + M | Add comment on line |
+| <center>/</center> | Focus fuzzy search box |
 
 _Work in progress_

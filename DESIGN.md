@@ -271,7 +271,7 @@ classDiagram
 ```
  -->
 
-![Renderer Class Diagram](assets/RendererClassDiag.svg)
+![Renderer Class Diagram](assets/RendererClassDiag.png)
 
 ---
 

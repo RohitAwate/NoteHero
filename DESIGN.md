@@ -217,20 +217,70 @@ In case the performance of the above system is poor, we can get rid of the union
 
 ---
 
+### TODO: Server Startup
+
 ### TODO: TF-IDF Algorithm
 
 ### TODO: Comments Re-Organization Algorithm
 
-### TODO: API Specification
+---
 
-### TODO: Database Design
+## API Specification
 
-### TODO: Server Startup
+### Renderer
+
+<!-- 
+
+```mermaid
+classDiagram
+
+    class NoteRenderer {
+        String source
+        NoteConfig config
+        NoteRenderer(String)
+        void parseConfig()
+        NoteConfig getConfig()
+        String render()
+    }
+
+    class NoteConfig {
+        String title
+        ArrayList categories
+        String slug
+        boolean sudo
+        NoteConfig(String title)
+        NoteConfig(String, ArrayList, String, boolean)
+    }
+
+    class YAMLFrontMatterParser {
+        String yamlSource
+        NoteConfig config
+        YAMLFrontMatterParser(String src)
+        NoteConfig parse()
+    }
+
+    class MarkdownRenderer {
+        String markdownSource
+        String yamlFrontMatter
+        String stripYAMLFrontMatter()
+    }
+
+    NoteRenderer "1" *-- "1" NoteConfig
+    MarkdownRenderer "1" *-- "1" YAMLFrontMatterParser
+    NoteRenderer <|-- MarkdownRenderer
+```
+ -->
+
+![Renderer Class Diagram](assets/RendererClassDiag.svg)
+
+---
+
+## TODO: Database Design
 
 ## Keybindings
 
 | Action | Keybinding |
-| - | - |
+| --- | --- |
 | Ctrl + Alt + M | Add comment on line |
 | <center>/</center> | Focus fuzzy search box |
 

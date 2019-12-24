@@ -217,9 +217,9 @@ In case the performance of the above system is poor, we can get rid of the union
 
 ---
 
-### TODO: Server Startup
-
 ### TODO: TF-IDF Algorithm
+
+### TODO: Server Startup
 
 ### TODO: Comments Re-Organization Algorithm
 
@@ -272,6 +272,41 @@ classDiagram
  -->
 
 ![Renderer Class Diagram](assets/RendererClassDiag.png)
+
+### Search Engine
+
+_Work in progress._
+
+<!--
+```mermaid
+
+classDiagram
+  
+    class Utils {
+        String HTMLToPlaintext(String)
+    }
+
+    class Token {
+        String text
+        int line
+        int start
+        int end
+        Token(String, int, int, int)
+    }
+
+    class Preprocessor {
+        Token[] tokens
+        Preprocessor(String)
+        void tokenize()
+        void removeStopwords()
+        void stemTokens()
+        Token[] getTokens()
+    }
+
+```
+-->
+
+![Search Engine Class Diagram](assets/SearchEngineClassDiag.png)
 
 ---
 

@@ -19,15 +19,15 @@ package io.github.rohitawate.notehero.renderer;
 public class RenderController {
     private String buildLog = "";
 
-    void appendInfo(final String msg) {
+    void logInfo(final String msg) {
         appendLog(msg, LogColors.BLUE);
     }
 
-    void appendWarning(final String msg) {
+    void logWarning(final String msg) {
         appendLog(msg, LogColors.YELLOW);
     }
 
-    void appendError(final String msg) {
+    void logError(final String msg) {
         appendLog(msg, LogColors.RED);
     }
 

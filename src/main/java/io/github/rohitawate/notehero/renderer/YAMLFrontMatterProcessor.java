@@ -30,7 +30,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
     private RenderController controller;
 
     public YAMLFrontMatterProcessor(String noteSource, RenderController controller) {
-        this.noteSource = noteSource.trim();
+        this.noteSource = noteSource;
         this.controller = controller;
     }
 
@@ -49,8 +49,21 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
         final String yfmDelimiter = "---";
 
+        // Get rid of leading/trailing whitespaces
+        noteSource = noteSource.trim();
+
+        // The source MUST start with the opening delimiter
         if (!noteSource.startsWith(yfmDelimiter)) {
-            controller.appendWarning("YAML Front Matter not found at start of file.");
+            controller.logWarning("YAML Front Matter not found at start of file.");
+            noFrontMatter = true;
+            return;
+        }
+
+        // The delimiters must be on separate lines.
+        // Thus, we ensure that the noteSource is more than the combined
+        // length of the opening delimiter (3) and the newline (1).
+        if (noteSource.length() == 4) {
+            controller.logWarning("YAML Front Matter not terminated.");
             noFrontMatter = true;
             return;
         }
@@ -59,18 +72,21 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
         // to skip the opening one
         int end = noteSource.indexOf(yfmDelimiter, 4);
         if (end == -1) {
-            controller.appendWarning("YAML Front Matter not terminated.");
+            controller.logWarning("YAML Front Matter not terminated.");
             noFrontMatter = true;
             return;
         }
 
         // We only store the actual YAML thus skipping the
-        // opening delimiter (4 = 3 x hyphens + newline)
+        // opening delimiter (4 = 3 hyphens + newline)
         yamlSource = noteSource.substring(4, end);
 
         // We store the actual note stripped of the YAML Front Matter.
-        // It begins after the closing delimiter (3 hyphens) + newline
-        noteSource = noteSource.substring(end + 4);
+        // It begins after the closing delimiter (3 hyphens).
+        // We trim to get rid of any whitespace between the Front Matter
+        // and the actual content.
+        noteSource = noteSource.substring(end + 3);
+        noteSource = noteSource.trim();
     }
 
     @Override

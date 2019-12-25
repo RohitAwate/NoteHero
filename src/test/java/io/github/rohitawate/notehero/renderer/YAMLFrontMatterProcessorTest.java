@@ -33,7 +33,7 @@ class YAMLFrontMatterProcessorTest {
     private RenderController controller = new RenderController();
 
     private YAMLFrontMatterProcessor positiveProc, positiveLeadingSpaceProc, emptyFrontMatterProc, noOpenDelimProc,
-            noCloseDelimProc, noFrontMatterProc;
+            noCloseDelimProc, noFrontMatterProc, emptySourceProc, singleDelimProc, bothDelimProc;
     private YFMTestCase positive, positiveLeadingSpace, emptyFrontMatter, noOpenDelim, noCloseDelim, noFrontMatter;
 
     @BeforeEach
@@ -41,7 +41,7 @@ class YAMLFrontMatterProcessorTest {
         positive = loadTest("Positive.json");
         positiveProc = new YAMLFrontMatterProcessor(positive.full, controller);
 
-        positiveLeadingSpace = loadTest("PositiveLeadingSpace.json");
+        positiveLeadingSpace = loadTest("LeadingWhitespace.json");
         positiveLeadingSpaceProc = new YAMLFrontMatterProcessor(positiveLeadingSpace.full, controller);
 
         emptyFrontMatter = loadTest("EmptyFrontMatter.json");
@@ -55,31 +55,64 @@ class YAMLFrontMatterProcessorTest {
 
         noCloseDelim = loadTest("NoCloseDelim.json");
         noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, controller);
+
+        emptySourceProc = new YAMLFrontMatterProcessor("", controller);
+        singleDelimProc = new YAMLFrontMatterProcessor("---", controller);
+        bothDelimProc = new YAMLFrontMatterProcessor("---\n---", controller);
     }
 
     @Test
-    void stripConfig() {
+    void positive() {
         assertEquals(positiveProc.getStrippedConfig(), positive.expectedYFM);
         assertEquals(positiveProc.getStrippedNote(), positive.expectedNote);
+    }
 
+    @Test
+    void positiveLeadingSpace() {
         assertEquals(positiveLeadingSpaceProc.getStrippedConfig(), positiveLeadingSpace.expectedYFM);
         assertEquals(positiveLeadingSpaceProc.getStrippedNote(), positiveLeadingSpace.expectedNote);
+    }
 
+    @Test
+    void emptyFrontMatter() {
         assertEquals(emptyFrontMatterProc.getStrippedConfig(), emptyFrontMatter.expectedYFM);
         assertEquals(emptyFrontMatterProc.getStrippedNote(), emptyFrontMatter.expectedNote);
+    }
 
+    @Test
+    void noFrontMatter() {
         assertEquals(noFrontMatterProc.getStrippedConfig(), noFrontMatter.expectedYFM);
         assertEquals(noFrontMatterProc.getStrippedNote(), noFrontMatter.expectedNote);
+    }
 
+    @Test
+    void noOpenDelim() {
         assertEquals(noOpenDelimProc.getStrippedConfig(), noOpenDelim.expectedYFM);
         assertEquals(noOpenDelimProc.getStrippedNote(), noOpenDelim.expectedNote);
+    }
 
+    @Test
+    void noCloseDelim() {
         assertEquals(noCloseDelimProc.getStrippedConfig(), noCloseDelim.expectedYFM);
         assertEquals(noCloseDelimProc.getStrippedNote(), noCloseDelim.expectedNote);
     }
 
     @Test
-    void parseConfig() {
+    void emptySource() {
+        assertEquals(emptySourceProc.getStrippedConfig(), "");
+        assertEquals(emptySourceProc.getStrippedNote(), "");
+    }
+
+    @Test
+    void singleDelim() {
+        assertEquals(singleDelimProc.getStrippedConfig(), "");
+        assertEquals(singleDelimProc.getStrippedNote(), "---");
+    }
+
+    @Test
+    void bothDelim() {
+        assertEquals(bothDelimProc.getStrippedConfig(), "");
+        assertEquals(bothDelimProc.getStrippedNote(), "");
     }
 
     YFMTestCase loadTest(String testCasePath) throws IOException, URISyntaxException {

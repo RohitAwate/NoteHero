@@ -25,11 +25,27 @@ interface ConfigProcessor {
     /**
      * Strips the configuration data substring
      * from the note's source.
+     */
+    void stripConfig();
+
+    /**
+     * The stripped configuration data is returned
+     * here. If stripConfig() has not been called
+     * before, it should be called here.
      *
-     * @param source Note's source string
      * @return Stripped configuration substring
      */
-    String stripConfig(String source);
+    String getStrippedConfig();
+
+    /**
+     * After stripping the configuration data, only
+     * the relevant markup source remains. This is
+     * returned here. If stripConfig() has not been
+     * called before, it should be called here.
+     *
+     * @return Markup source without configuration data
+     */
+    String getStrippedNote();
 
     /**
      * Parses the configuration substring and

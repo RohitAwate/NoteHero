@@ -21,7 +21,7 @@ package io.github.rohitawate.notehero.renderer;
  * classes that render notes from any source format
  * to HTML.
  */
-public interface NoteRenderer {
+interface NoteRenderer {
     /**
      * Renders the note from the source format to HTML.
      * Any configuration data must be stripped and parsed before

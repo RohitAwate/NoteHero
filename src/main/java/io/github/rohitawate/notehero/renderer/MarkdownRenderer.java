@@ -17,19 +17,27 @@
 package io.github.rohitawate.notehero.renderer;
 
 /**
- * Used to store the configuration data stored in notes
- * that may be used to affect the build process.
+ * Implementation of NoteRenderer for the Markdown
+ * source format.
  */
-class NoteConfig {
-    final String title;
-    final String[] categories;
-    final String slug;
-    final boolean sudo;
+class MarkdownRenderer implements NoteRenderer {
+    private String noteSource;
+    private NoteConfig config;
 
-    NoteConfig(String title, String[] categories, String slug, boolean sudo) {
-        this.title = title;
-        this.categories = categories;
-        this.slug = slug;
-        this.sudo = sudo;
+    private RenderController controller;
+
+    public MarkdownRenderer(String noteSource, RenderController controller) {
+        this.noteSource = noteSource;
+        this.controller = controller;
+    }
+
+    @Override
+    public String render() {
+        return null;
+    }
+
+    @Override
+    public NoteConfig getConfig() {
+        return null;
     }
 }

@@ -16,49 +16,47 @@
 
 package io.github.rohitawate.notehero.renderer;
 
-import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class YAMLFrontMatterProcessorTest {
-	private RenderThread controller = new RenderController();
+	private RenderThread thread = new RenderThread("/home/notehero/notes/CS/Deep Learning/CNN.md", new RenderController());
 
-	private YAMLFrontMatterProcessor positiveProc, positiveLeadingSpaceProc, emptyFrontMatterProc, noOpenDelimProc,
+	private YAMLFrontMatterProcessor positiveProc, leadingWhitespace, emptyFrontMatterProc, noOpenDelimProc,
 			noCloseDelimProc, noFrontMatterProc, emptySourceProc, singleDelimProc, bothDelimProc;
 	private YFMTestCase positive, positiveLeadingSpace, emptyFrontMatter, noOpenDelim, noCloseDelim, noFrontMatter;
 
 	@BeforeEach
-	void setUp() throws IOException, URISyntaxException {
-		positive = loadTest("Positive.json");
-		positiveProc = new YAMLFrontMatterProcessor(positive.full, controller);
+	void setUp() throws JAXBException {
+		positive = loadTest("Positive.xml");
+		positiveProc = new YAMLFrontMatterProcessor(positive.full, thread);
 
-		positiveLeadingSpace = loadTest("LeadingWhitespace.json");
-		positiveLeadingSpaceProc = new YAMLFrontMatterProcessor(positiveLeadingSpace.full, controller);
+		positiveLeadingSpace = loadTest("LeadingWhitespace.xml");
+		leadingWhitespace = new YAMLFrontMatterProcessor(positiveLeadingSpace.full, thread);
 
-		emptyFrontMatter = loadTest("EmptyFrontMatter.json");
-		emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, controller);
+		emptyFrontMatter = loadTest("EmptyFrontMatter.xml");
+		emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, thread);
 
-		noFrontMatter = loadTest("NoFrontMatter.json");
-		noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, controller);
+		noFrontMatter = loadTest("NoFrontMatter.xml");
+		noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, thread);
 
-		noOpenDelim = loadTest("NoOpenDelim.json");
-		noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, controller);
+		noOpenDelim = loadTest("NoOpenDelim.xml");
+		noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, thread);
 
-		noCloseDelim = loadTest("NoCloseDelim.json");
-		noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, controller);
+		noCloseDelim = loadTest("NoCloseDelim.xml");
+		noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, thread);
 
-		emptySourceProc = new YAMLFrontMatterProcessor("", controller);
-		singleDelimProc = new YAMLFrontMatterProcessor("---", controller);
-		bothDelimProc = new YAMLFrontMatterProcessor("---\n---", controller);
+		emptySourceProc = new YAMLFrontMatterProcessor("", thread);
+		singleDelimProc = new YAMLFrontMatterProcessor("---", thread);
+		bothDelimProc = new YAMLFrontMatterProcessor("---\n---", thread);
 	}
 
 	@Test
@@ -68,9 +66,9 @@ class YAMLFrontMatterProcessorTest {
 	}
 
 	@Test
-	void positiveLeadingSpace() {
-		assertEquals(positiveLeadingSpaceProc.getConfigString(), positiveLeadingSpace.expectedYFM);
-		assertEquals(positiveLeadingSpaceProc.getStrippedNote(), positiveLeadingSpace.expectedNote);
+	void leadingWhitespace() {
+		assertEquals(leadingWhitespace.getConfigString(), positiveLeadingSpace.expectedYFM);
+		assertEquals(leadingWhitespace.getStrippedNote(), positiveLeadingSpace.expectedNote);
 	}
 
 	@Test
@@ -115,23 +113,48 @@ class YAMLFrontMatterProcessorTest {
 		assertEquals(bothDelimProc.getStrippedNote(), "");
 	}
 
-	YFMTestCase loadTest(String testCasePath) throws IOException, URISyntaxException {
+	YFMTestCase loadTest(String testCasePath) throws JAXBException {
 		URL url = getClass().getResource("YAMLFrontMatterProcessor/" + testCasePath);
-		Path path = Paths.get(url.toURI());
-		String fileContents = new String(Files.readAllBytes(path));
 
-		Gson gson = new Gson();
-		return gson.fromJson(fileContents, YFMTestCase.class);
+		JAXBContext context = JAXBContext.newInstance(YFMTestCase.class);
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+
+
+		YFMTestCase testCase = (YFMTestCase) unmarshaller.unmarshal(url);
+		testCase.full = testCase.full.trim();
+		testCase.expectedYFM = testCase.expectedYFM.trim();
+		testCase.expectedNote = testCase.expectedNote.trim();
+
+		return testCase;
 	}
 
+	@XmlRootElement(name = "YFMTestCase")
 	static class YFMTestCase {
-		final String full;
-		final String expectedYFM;
-		final String expectedNote;
+		private String full;
+		private String expectedYFM;
+		private String expectedNote;
 
-		public YFMTestCase(String full, String expectedYFM, String expectedNote) {
+		public String getFull() {
+			return full;
+		}
+
+		public void setFull(String full) {
 			this.full = full;
+		}
+
+		public String getExpectedYFM() {
+			return expectedYFM;
+		}
+
+		public void setExpectedYFM(String expectedYFM) {
 			this.expectedYFM = expectedYFM;
+		}
+
+		public String getExpectedNote() {
+			return expectedNote;
+		}
+
+		public void setExpectedNote(String expectedNote) {
 			this.expectedNote = expectedNote;
 		}
 	}

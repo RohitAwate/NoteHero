@@ -88,6 +88,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// We only store the actual YAML thus skipping the
 		// opening delimiter (4 = 3 hyphens + newline)
 		yamlSource = noteSource.substring(4, end);
+		yamlSource = yamlSource.trim();
 
 		// We store the actual note stripped of the YAML Front Matter.
 		// It begins after the closing delimiter (3 hyphens).

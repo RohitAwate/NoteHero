@@ -16,14 +16,16 @@
 
 package io.github.rohitawate.notehero.renderer;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,7 +37,7 @@ class YAMLFrontMatterProcessorTest {
 	private YFMTestCase positive, positiveLeadingSpace, emptyFrontMatter, noOpenDelim, noCloseDelim, noFrontMatter;
 
 	@BeforeEach
-	void setUp() throws JAXBException {
+	void setUp() throws IOException, URISyntaxException {
 		positive = loadTest("Positive.xml");
 		positiveProc = new YAMLFrontMatterProcessor(positive.full, thread);
 
@@ -113,14 +115,14 @@ class YAMLFrontMatterProcessorTest {
 		assertEquals(bothDelimProc.getStrippedNote(), "");
 	}
 
-	YFMTestCase loadTest(String testCasePath) throws JAXBException {
+	YFMTestCase loadTest(String testCasePath) throws URISyntaxException, IOException {
 		URL url = getClass().getResource("YAMLFrontMatterProcessor/" + testCasePath);
+		Path path = Paths.get(url.toURI());
+		String fileContents = new String(Files.readAllBytes(path));
 
-		JAXBContext context = JAXBContext.newInstance(YFMTestCase.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
+		XmlMapper mapper = new XmlMapper();
+		YFMTestCase testCase = mapper.readValue(fileContents, YFMTestCase.class);
 
-
-		YFMTestCase testCase = (YFMTestCase) unmarshaller.unmarshal(url);
 		testCase.full = testCase.full.trim();
 		testCase.expectedYFM = testCase.expectedYFM.trim();
 		testCase.expectedNote = testCase.expectedNote.trim();
@@ -128,7 +130,6 @@ class YAMLFrontMatterProcessorTest {
 		return testCase;
 	}
 
-	@XmlRootElement(name = "YFMTestCase")
 	static class YFMTestCase {
 		private String full;
 		private String expectedYFM;

@@ -143,8 +143,8 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		Map<String, String> noteHero = (Map<String, String>) yamlMap.get("notehero");
 
-		String title = noteHero.getOrDefault("title", generateDefaultTitle());
-		String slug = noteHero.getOrDefault("slug", generateDefaultSlug());
+		String title = noteHero.getOrDefault("title", generateDefaultTitle(renderThread.filePath));
+		String slug = noteHero.getOrDefault("slug", generateDefaultSlug(renderThread.filePath));
 
 		boolean sudo = true;    // defaults to true
 		if (noteHero.containsKey("sudo")) {
@@ -163,30 +163,30 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		return config;
 	}
 
-	private String generateDefaultTitle() {
+	private String generateDefaultTitle(String filePath) {
 		// extract filename
-		String filename = getFileName();
+		String fileName = getFileName(filePath);
 
-		// identify filename type
-		// - filename with spaces
+		// identify fileName type
+		// - fileName with spaces
 		// - snake_case
 		// - CamelCase
 		//
 		// Separate into individual words and then concatenate by adding spaces.
 
 		StringBuilder titleBuilder = new StringBuilder();
-		if (filename.contains(" ")) {
+		if (fileName.contains(" ")) {
 			// example: 'Hello world' becomes 'Hello world' thus preserving the case
 			// of each word
-			String[] tokens = filename.split("\\s+");
+			String[] tokens = fileName.split("\\s+");
 
 			for (String token : tokens) {
 				titleBuilder.append(token);
 				titleBuilder.append(" ");
 			}
-		} else if (filename.contains("_")) {
+		} else if (fileName.contains("_")) {
 			// example: 'hello_Word' becomes 'Hello World'
-			String[] tokens = filename.split("_");
+			String[] tokens = fileName.split("_");
 
 			for (String token : tokens) {
 				token = token.toLowerCase();
@@ -196,8 +196,8 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		} else {
 			// example: 'HelloWorld' becomes 'Hello World'
 			char c;
-			for (int i = 0; i < filename.length(); i++) {
-				c = filename.charAt(i);
+			for (int i = 0; i < fileName.length(); i++) {
+				c = fileName.charAt(i);
 				if (i != 0 && Character.isUpperCase(c)) {
 					titleBuilder.append(" ");
 				}
@@ -222,7 +222,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 * of hierarchy
 	 */
 	private String[] generateDefaultCategories() {
-		// Obtain the filepath
+		// Obtain the file's path
 		String filePath = renderThread.filePath;
 
 		// NoteHero expects all note sources to reside within
@@ -245,8 +245,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		String category;
 		while ((category = fd.getParent()) != null) {
-			// TODO: Process category string same as title
+			// Clean up the directory name
+			category = generateDefaultTitle(category);
 
+			// Push to stack since our category hierarchy
+			// is the reverse of the directories'
 			categoryStack.push(category);
 		}
 
@@ -259,11 +262,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		return categories;
 	}
 
-	private String generateDefaultSlug() {
-		String filename = getFileName();
+	private String generateDefaultSlug(String filePath) {
+		String fileName = getFileName(filePath);
 
-		// identify filename type
-		// - filename with spaces
+		// identify fileName type
+		// - fileName with spaces
 		// - snake_case
 		// - CamelCase
 		//
@@ -271,18 +274,18 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// then concatenate by adding hyphens.
 
 		StringBuilder slugBuilder = new StringBuilder();
-		if (filename.contains(" ")) {
+		if (fileName.contains(" ")) {
 			// example: 'Hello world' becomes 'hello-world' thus preserving the case
 			// of each word
-			String[] tokens = filename.split("\\s+");
+			String[] tokens = fileName.split("\\s+");
 
 			for (String token : tokens) {
 				slugBuilder.append(token.toLowerCase());
 				slugBuilder.append("-");
 			}
-		} else if (filename.contains("_")) {
+		} else if (fileName.contains("_")) {
 			// example: 'hello_Word' becomes 'hello-world'
-			String[] tokens = filename.split("_");
+			String[] tokens = fileName.split("_");
 
 			for (String token : tokens) {
 				slugBuilder.append(token.toLowerCase());
@@ -291,8 +294,8 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		} else {
 			// example: 'HelloWorld' becomes 'hello-world'
 			char c;
-			for (int i = 0; i < filename.length(); i++) {
-				c = filename.charAt(i);
+			for (int i = 0; i < fileName.length(); i++) {
+				c = fileName.charAt(i);
 				if (i != 0 && Character.isUpperCase(c)) {
 					slugBuilder.append("-");
 				}
@@ -305,19 +308,19 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	}
 
 	@NotNull
-	private String getFileName() {
-		// extract filename
-		File fd = new File(renderThread.filePath);
-		String filename = fd.getName();
+	private String getFileName(String filePath) {
+		// extract fileName
+		File fd = new File(filePath);
+		String fileName = fd.getName();
 
 		// remove extension
-		filename = filename.split("\\.")[0];
+		fileName = fileName.split("\\.")[0];
 
 		// remove all characters except upper/lower case alphabet,
 		// numbers, underscores and spaces
-		filename = filename.replaceAll("[^a-zA-Z0-9_\\s]+", "");
+		fileName = fileName.replaceAll("[^a-zA-Z0-9_\\s]+", "");
 
-		return filename;
+		return fileName;
 	}
 
 	/**
@@ -326,7 +329,8 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 * @return NoteConfig instance initialized with default values
 	 */
 	private NoteConfig generateDefaultConfig() {
-		return new NoteConfig(generateDefaultTitle(), generateDefaultCategories(), generateDefaultSlug(), true);
+		return new NoteConfig(generateDefaultTitle(renderThread.filePath), generateDefaultCategories(),
+				generateDefaultSlug(renderThread.filePath), true);
 	}
 
 	/**

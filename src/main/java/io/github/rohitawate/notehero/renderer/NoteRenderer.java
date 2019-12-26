@@ -22,22 +22,22 @@ package io.github.rohitawate.notehero.renderer;
  * to HTML.
  */
 interface NoteRenderer {
-    /**
-     * Renders the note from the source format to HTML.
-     * Any configuration data must be stripped and parsed before
-     * rendering the note.
-     *
-     * @return HTML source string
-     */
-    String render();
+	/**
+	 * Renders the note from the source format to HTML.
+	 * Any configuration data must be stripped and parsed before
+	 * rendering the note.
+	 *
+	 * @return HTML source string
+	 */
+	String render();
 
-    /**
-     * Implementations should utilize a ConfigProcessor
-     * for stripping and parsing configuration data that may
-     * be part of the note's source. A NoteConfig object
-     * built out of this data should be returned.
-     *
-     * @return Parsed note configuration
-     */
-    NoteConfig getConfig();
+	/**
+	 * Implementations should utilize a ConfigProcessor
+	 * for stripping and parsing configuration data that may
+	 * be part of the note's source. A NoteConfig object
+	 * built out of this data should be returned.
+	 *
+	 * @return Parsed note configuration
+	 */
+	NoteConfig getConfig();
 }

@@ -1,5 +1,5 @@
 {
-  "full": "---\nnotehero:\n    title: \\'Convolutional Neural Networks\\'\n    sudo: false\n    slug: \\'cnn\\'\n    categories: \\'CS > Deep Learning\\'\n---\n\n### HPC: Unit 5\n# Parallel Algorithms: Sorting and Graph\n\n---\n\n### Syllabus\nIssues in Sorting on Parallel Computers, Bubble Sort and its Variants,\nParallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,\nParallel Depth-First Search, Parallel Best-First Search\n---",
-  "expectedYFM": "notehero:\n    title: \\'Convolutional Neural Networks\\'\n    sudo: false\n    slug: \\'cnn\\'\n    categories: \\'CS > Deep Learning\\'\n",
+  "full": "---\nnotehero:\n    title: \"Convolutional Neural Networks\"\n    sudo: false\n    slug: \"cnn\"\n    categories: \"CS > Deep Learning\"\n---\n\n### HPC: Unit 5\n# Parallel Algorithms: Sorting and Graph\n\n---\n\n### Syllabus\nIssues in Sorting on Parallel Computers, Bubble Sort and its Variants,\nParallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,\nParallel Depth-First Search, Parallel Best-First Search\n---",
+  "expectedYFM": "notehero:\n    title: \"Convolutional Neural Networks\"\n    sudo: false\n    slug: \"cnn\"\n    categories: \"CS > Deep Learning\"\n",
   "expectedNote": "### HPC: Unit 5\n# Parallel Algorithms: Sorting and Graph\n\n---\n\n### Syllabus\nIssues in Sorting on Parallel Computers, Bubble Sort and its Variants,\nParallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,\nParallel Depth-First Search, Parallel Best-First Search\n---"
 }

@@ -21,23 +21,23 @@ package io.github.rohitawate.notehero.renderer;
  * source format.
  */
 class MarkdownRenderer implements NoteRenderer {
-    private String noteSource;
-    private NoteConfig config;
+	private String noteSource;
+	private NoteConfig config;
 
-    private RenderController controller;
+	private RenderThread renderThread;
 
-    public MarkdownRenderer(String noteSource, RenderController controller) {
-        this.noteSource = noteSource;
-        this.controller = controller;
-    }
+	public MarkdownRenderer(String noteSource, RenderThread renderThread) {
+		this.noteSource = noteSource;
+		this.renderThread = renderThread;
+	}
 
-    @Override
-    public String render() {
-        return null;
-    }
+	@Override
+	public String render() {
+		return null;
+	}
 
-    @Override
-    public NoteConfig getConfig() {
-        return null;
-    }
+	@Override
+	public NoteConfig getConfig() {
+		return null;
+	}
 }

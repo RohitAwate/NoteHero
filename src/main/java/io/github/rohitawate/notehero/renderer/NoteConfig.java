@@ -16,20 +16,32 @@
 
 package io.github.rohitawate.notehero.renderer;
 
+import java.util.Arrays;
+
 /**
  * Used to store the configuration data stored in notes
  * that may be used to affect the build process.
  */
 class NoteConfig {
-    final String title;
-    final String[] categories;
-    final String slug;
-    final boolean sudo;
+	final String title;
+	final String[] categories;
+	final String slug;
+	final boolean sudo;
 
-    NoteConfig(String title, String[] categories, String slug, boolean sudo) {
-        this.title = title;
-        this.categories = categories;
-        this.slug = slug;
-        this.sudo = sudo;
-    }
+	NoteConfig(String title, String[] categories, String slug, boolean sudo) {
+		this.title = title;
+		this.categories = categories;
+		this.slug = slug;
+		this.sudo = sudo;
+	}
+
+	@Override
+	public String toString() {
+		return "NoteConfig{" +
+				"title='" + title + '\'' +
+				", categories=" + Arrays.toString(categories) +
+				", slug='" + slug + '\'' +
+				", sudo=" + sudo +
+				'}';
+	}
 }

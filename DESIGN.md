@@ -135,9 +135,10 @@ NoteHero's rendering and search indexing can be configured by adding the above b
 
 - `title` (String): Applied to the `<title>` tag in the rendered HTML.
 \
-**Default behaviour is as follows:**
+**Default behaviour is as follows:** \
+**First, remove all characters except upper/lower case alphabet, numbers, underscores and spaces.**
     - **For camel-case filenames**:
-    Extension is omitted. The individual words from are separated and then concatenated by adding single space in between.
+    Extension is omitted. The individual words are separated and then concatenated by adding single space in between.
     For example, `HelloWorld.md` becomes `Hello World`.
     - **For snake-case filenames**:
     Extension is omitted. Individual words are separated, first letter is capitalized and then they are concatenated by adding single space in between.
@@ -147,9 +148,10 @@ NoteHero's rendering and search indexing can be configured by adding the above b
 - `sudo` (Boolean): Defines the visibility of the note. If `true`, note is only visible when logged in, else it is publicly visible. **Defaults to `true`**.
 - `slug` (String): Used in the URL of the final note. The format of the URL is as follows: `/cat1/cat2/.../catn/slug` where `cat1`, `cat2`, etc. are the `categories` in the YAML Front Matter.
 \
-**Default behaviour is as follows:**
+**Default behaviour is as follows:** \
+**First, remove all characters except upper/lower case alphabet, numbers, underscores and spaces.**
     - **For camel-case filenames**:
-    Extension is omitted. The individual words from are separated, converted to lower-cased and then concatenated by adding hyphens in between.
+    Extension is omitted. The individual words are separated, converted to lower-cased and then concatenated by adding hyphens in between.
     For example, `HelloWorld.md` becomes `hello-world`.
     - **For snake-case filenames**:
     Extension is omitted. Underscores are replaced with hyphens.

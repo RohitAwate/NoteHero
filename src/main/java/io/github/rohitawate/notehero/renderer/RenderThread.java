@@ -16,21 +16,29 @@
 
 package io.github.rohitawate.notehero.renderer;
 
-public class RenderController {
-	private String buildLog = "";
+public class RenderThread implements Runnable {
+	final String filePath;
+	private final RenderController controller;
 
-	synchronized void appendLog(final String msg, final String color) {
-		buildLog += color + msg + LogColors.RESET + "\n";
+	public RenderThread(String filePath, RenderController controller) {
+		this.filePath = filePath;
+		this.controller = controller;
 	}
 
-	public String getBuildLog() {
-		return this.buildLog;
+	@Override
+	public void run() {
+
 	}
 
-	interface LogColors {
-		String RESET = "\u001B[0m";
-		String RED = "\u001B[31m";
-		String YELLOW = "\u001B[33m";
-		String BLUE = "\u001B[34m";
+	void logInfo(String msg) {
+		controller.appendLog(msg, RenderController.LogColors.BLUE);
+	}
+
+	void logWarning(String msg) {
+		controller.appendLog(msg, RenderController.LogColors.YELLOW);
+	}
+
+	void logError(String msg) {
+		controller.appendLog(msg, RenderController.LogColors.RED);
 	}
 }

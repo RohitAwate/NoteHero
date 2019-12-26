@@ -131,15 +131,25 @@ notehero:
 ---
 ```
 
-NoteHero's rendering and search indexing can be configured by adding the above block of YAML Front Matter at the beginning of your note.
+NoteHero's rendering and search indexing can be configured by adding the above block of YAML Front Matter at the beginning of your note. All attributes are **_optional_**.
 
-- `title` (String, _required_): Applied to the `<title>` tag in the rendered HTML.
-- `sudo` (Boolean, _optional_): Defines the visibility of the note. If `true`, note is only visible when logged in, else it is publicly visible. **Defaults to `true`**.
-- `slug` (String, _optional_): Used in the URL of the final note. The format of the URL is as follows: `/cat1/cat2/.../catn/slug` where `cat1`, `cat2`, etc. are the `categories` in the YAML Front Matter.
+- `title` (String): Applied to the `<title>` tag in the rendered HTML.
 \
 **Default behaviour is as follows:**
     - **For camel-case filenames**:
-    Extension is omitted. The individual words from are separated, converted to lower-cased and then concatenated by adding hyphens in the middle.
+    Extension is omitted. The individual words from are separated and then concatenated by adding single space in between.
+    For example, `HelloWorld.md` becomes `Hello World`.
+    - **For snake-case filenames**:
+    Extension is omitted. Individual words are separated, first letter is capitalized and then they are concatenated by adding single space in between.
+    For example, `hello_world.md` becomes `Hello World`.
+    - **For filenames with spaces**:
+    Extension is omitted. For example, `Hello world.md` becomes `Hello world`.
+- `sudo` (Boolean): Defines the visibility of the note. If `true`, note is only visible when logged in, else it is publicly visible. **Defaults to `true`**.
+- `slug` (String): Used in the URL of the final note. The format of the URL is as follows: `/cat1/cat2/.../catn/slug` where `cat1`, `cat2`, etc. are the `categories` in the YAML Front Matter.
+\
+**Default behaviour is as follows:**
+    - **For camel-case filenames**:
+    Extension is omitted. The individual words from are separated, converted to lower-cased and then concatenated by adding hyphens in between.
     For example, `HelloWorld.md` becomes `hello-world`.
     - **For snake-case filenames**:
     Extension is omitted. Underscores are replaced with hyphens.
@@ -147,12 +157,12 @@ NoteHero's rendering and search indexing can be configured by adding the above b
     - **For filenames with spaces**:
     Extension is omitted. Spaces are replaced with hyphens. Entire string is converted to lowercase.
     For example, `Hello world.md` becomes `hello-world`.
-- `categories` (String, _optional_): Categories should separated by > i.e. closing angle bracket and written left to right in decreasing order of hierarchy. For example, refer the above example. Categories are included in the search index and used to organize the notes in a hierarchy, as shown in the homepage mockup. \
+- `categories` (String): Categories should separated by > i.e. closing angle bracket and written left to right in decreasing order of hierarchy. For example, refer the above example. Categories are included in the search index and used to organize the notes in a hierarchy, as shown in the homepage mockup. \
 **Default behaviour depends on the location of the Markdown source file:**
     - If it is nested within directories inside the `notes/` directory, the names of the directories are used for the categories. The hierarchy of the directory structure is maintained. For example, if the file is located in `notes/Math/Calculus/Differentiation/`, then the categories are as `Math > Calculus > Differentiation`.
     - If it is located in `notes/`, then no categories are added to the note. This may cause conflicts while generating URLs.
 
-Attributes marked as _required_, if not provided in the YAML Front Matter, will result in a build error. NoteHero parses the Front Matter and returns a `NoteConfig` object initialized with values from the parse tree.
+NoteHero parses the Front Matter and returns a `NoteConfig` object initialized with values from the parse tree.
 
 ---
 

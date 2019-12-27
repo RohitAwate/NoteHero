@@ -55,4 +55,14 @@
 		Parallel Depth-First Search, Parallel Best-First Search
 		---
 	</expectedNote>
+	<filePath>/home/notehero/notes/CS/Deep Learning/CNN.md</filePath>
+	<expectedConfig>
+		<title>Convolutional Neural Networks</title>
+		<sudo>false</sudo>
+		<slug>cnn</slug>
+		<categories>
+			<categories>CS</categories>
+			<categories>Deep Learning</categories>
+		</categories>
+	</expectedConfig>
 </YFMTestCase>

@@ -17,7 +17,7 @@
 package io.github.rohitawate.notehero.renderer;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,89 +30,97 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class YAMLFrontMatterProcessorTest {
-	private RenderThread thread = new RenderThread("/home/notehero/notes/CS/Deep Learning/CNN.md", new RenderController());
 
-	private YAMLFrontMatterProcessor positiveProc, leadingWhitespace, emptyFrontMatterProc, noOpenDelimProc,
-			noCloseDelimProc, noFrontMatterProc, emptySourceProc, singleDelimProc, bothDelimProc;
-	private YFMTestCase positive, positiveLeadingSpace, emptyFrontMatter, noOpenDelim, noCloseDelim, noFrontMatter;
-
-	@BeforeEach
-	void setUp() throws IOException, URISyntaxException {
-		positive = loadTest("Positive.xml");
-		positiveProc = new YAMLFrontMatterProcessor(positive.full, thread);
-
-		positiveLeadingSpace = loadTest("LeadingWhitespace.xml");
-		leadingWhitespace = new YAMLFrontMatterProcessor(positiveLeadingSpace.full, thread);
-
-		emptyFrontMatter = loadTest("EmptyFrontMatter.xml");
-		emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, thread);
-
-		noFrontMatter = loadTest("NoFrontMatter.xml");
-		noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, thread);
-
-		noOpenDelim = loadTest("NoOpenDelim.xml");
-		noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, thread);
-
-		noCloseDelim = loadTest("NoCloseDelim.xml");
-		noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, thread);
-
-		emptySourceProc = new YAMLFrontMatterProcessor("", thread);
-		singleDelimProc = new YAMLFrontMatterProcessor("---", thread);
-		bothDelimProc = new YAMLFrontMatterProcessor("---\n---", thread);
-	}
+	private RenderController controller = new RenderController();
 
 	@Test
-	void positive() {
+	void positive() throws IOException, URISyntaxException {
+		YFMTestCase positive = loadTest("Positive.xml");
+		YAMLFrontMatterProcessor positiveProc = new YAMLFrontMatterProcessor(positive.full, new RenderThread(positive.filePath, controller));
+
 		assertEquals(positiveProc.getConfigString(), positive.expectedYFM);
 		assertEquals(positiveProc.getStrippedNote(), positive.expectedNote);
+		assertEquals(positiveProc.getParsedConfig(), positive.expectedConfig);
 	}
 
 	@Test
-	void leadingWhitespace() {
-		assertEquals(leadingWhitespace.getConfigString(), positiveLeadingSpace.expectedYFM);
-		assertEquals(leadingWhitespace.getStrippedNote(), positiveLeadingSpace.expectedNote);
+	void leadingWhitespace() throws IOException, URISyntaxException {
+		YFMTestCase leadingWhitespace = loadTest("LeadingWhitespace.xml");
+		YAMLFrontMatterProcessor leadingWhitespaceProc = new YAMLFrontMatterProcessor(leadingWhitespace.full, new RenderThread(leadingWhitespace.filePath, controller));
+
+		assertEquals(leadingWhitespaceProc.getConfigString(), leadingWhitespace.expectedYFM);
+		assertEquals(leadingWhitespaceProc.getStrippedNote(), leadingWhitespace.expectedNote);
+		assertEquals(leadingWhitespaceProc.getParsedConfig(), leadingWhitespace.expectedConfig);
 	}
 
 	@Test
-	void emptyFrontMatter() {
+	void emptyFrontMatter() throws IOException, URISyntaxException {
+		YFMTestCase emptyFrontMatter = loadTest("EmptyFrontMatter.xml");
+		YAMLFrontMatterProcessor emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, new RenderThread(emptyFrontMatter.filePath, controller));
+
 		assertEquals(emptyFrontMatterProc.getConfigString(), emptyFrontMatter.expectedYFM);
 		assertEquals(emptyFrontMatterProc.getStrippedNote(), emptyFrontMatter.expectedNote);
+		assertEquals(emptyFrontMatterProc.getParsedConfig(), emptyFrontMatter.expectedConfig);
 	}
 
 	@Test
-	void noFrontMatter() {
+	void noFrontMatter() throws IOException, URISyntaxException {
+		YFMTestCase noFrontMatter = loadTest("NoFrontMatter.xml");
+		YAMLFrontMatterProcessor noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, new RenderThread(noFrontMatter.filePath, controller));
+
 		assertEquals(noFrontMatterProc.getConfigString(), noFrontMatter.expectedYFM);
 		assertEquals(noFrontMatterProc.getStrippedNote(), noFrontMatter.expectedNote);
+		assertEquals(noFrontMatterProc.getParsedConfig(), noFrontMatter.expectedConfig);
 	}
 
 	@Test
-	void noOpenDelim() {
+	void noOpenDelim() throws IOException, URISyntaxException {
+		YFMTestCase noOpenDelim = loadTest("NoOpenDelim.xml");
+		YAMLFrontMatterProcessor noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, new RenderThread(noOpenDelim.filePath, controller));
+
 		assertEquals(noOpenDelimProc.getConfigString(), noOpenDelim.expectedYFM);
 		assertEquals(noOpenDelimProc.getStrippedNote(), noOpenDelim.expectedNote);
+		assertEquals(noOpenDelimProc.getParsedConfig(), noOpenDelim.expectedConfig);
 	}
 
 	@Test
-	void noCloseDelim() {
+	void noCloseDelim() throws IOException, URISyntaxException {
+		YFMTestCase noCloseDelim = loadTest("NoCloseDelim.xml");
+		YAMLFrontMatterProcessor noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, new RenderThread(noCloseDelim.filePath, controller));
+
 		assertEquals(noCloseDelimProc.getConfigString(), noCloseDelim.expectedYFM);
 		assertEquals(noCloseDelimProc.getStrippedNote(), noCloseDelim.expectedNote);
+		assertEquals(noCloseDelimProc.getParsedConfig(), noCloseDelim.expectedConfig);
 	}
 
 	@Test
-	void emptySource() {
-		assertEquals(emptySourceProc.getConfigString(), "");
-		assertEquals(emptySourceProc.getStrippedNote(), "");
+	void emptySource() throws IOException, URISyntaxException {
+		YFMTestCase emptySource = loadTest("EmptySource.xml");
+		YAMLFrontMatterProcessor emptySourceProc = new YAMLFrontMatterProcessor(emptySource.full, new RenderThread(emptySource.filePath, controller));
+
+		assertEquals(emptySourceProc.getConfigString(), emptySource.expectedYFM);
+		assertEquals(emptySourceProc.getStrippedNote(), emptySource.expectedNote);
+		assertEquals(emptySourceProc.getParsedConfig(), emptySource.expectedConfig);
 	}
 
 	@Test
-	void singleDelim() {
-		assertEquals(singleDelimProc.getConfigString(), "");
-		assertEquals(singleDelimProc.getStrippedNote(), "---");
+	void singleDelim() throws IOException, URISyntaxException {
+		YFMTestCase singleDelim = loadTest("SingleDelim.xml");
+		YAMLFrontMatterProcessor singleDelimProc = new YAMLFrontMatterProcessor(singleDelim.full, new RenderThread(singleDelim.filePath, controller));
+
+		assertEquals(singleDelimProc.getConfigString(), singleDelim.expectedYFM);
+		assertEquals(singleDelimProc.getStrippedNote(), singleDelim.expectedNote);
+		assertEquals(singleDelimProc.getParsedConfig(), singleDelim.expectedConfig);
 	}
 
 	@Test
-	void bothDelim() {
-		assertEquals(bothDelimProc.getConfigString(), "");
-		assertEquals(bothDelimProc.getStrippedNote(), "");
+	void bothDelim() throws IOException, URISyntaxException {
+		YFMTestCase bothDelim = loadTest("BothDelim.xml");
+		YAMLFrontMatterProcessor bothDelimProc = new YAMLFrontMatterProcessor(bothDelim.full, new RenderThread(bothDelim.filePath, controller));
+
+		assertEquals(bothDelimProc.getConfigString(), bothDelim.expectedYFM);
+		assertEquals(bothDelimProc.getStrippedNote(), bothDelim.expectedNote);
+		assertEquals(bothDelimProc.getParsedConfig(), bothDelim.expectedConfig);
 	}
 
 	YFMTestCase loadTest(String testCasePath) throws URISyntaxException, IOException {
@@ -131,32 +139,19 @@ class YAMLFrontMatterProcessorTest {
 	}
 
 	static class YFMTestCase {
+		@JacksonXmlProperty
 		private String full;
+
+		@JacksonXmlProperty
 		private String expectedYFM;
+
+		@JacksonXmlProperty
 		private String expectedNote;
 
-		public String getFull() {
-			return full;
-		}
+		@JacksonXmlProperty
+		private String filePath;
 
-		public void setFull(String full) {
-			this.full = full;
-		}
-
-		public String getExpectedYFM() {
-			return expectedYFM;
-		}
-
-		public void setExpectedYFM(String expectedYFM) {
-			this.expectedYFM = expectedYFM;
-		}
-
-		public String getExpectedNote() {
-			return expectedNote;
-		}
-
-		public void setExpectedNote(String expectedNote) {
-			this.expectedNote = expectedNote;
-		}
+		@JacksonXmlProperty
+		private NoteConfig expectedConfig;
 	}
 }

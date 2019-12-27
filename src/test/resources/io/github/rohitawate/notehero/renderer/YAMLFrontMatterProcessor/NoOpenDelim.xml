@@ -55,4 +55,14 @@
 		Parallel Depth-First Search, Parallel Best-First Search
 		---
 	</expectedNote>
+	<filePath>/home/notehero/notes/wood working/building a canoe/ron_swanson.md</filePath>
+	<expectedConfig>
+		<title>Ron Swanson</title>
+		<sudo>true</sudo>
+		<slug>ron-swanson</slug>
+		<categories>
+			<categories>Wood Working</categories>
+			<categories>Building a Canoe</categories>
+		</categories>
+	</expectedConfig>
 </YFMTestCase>

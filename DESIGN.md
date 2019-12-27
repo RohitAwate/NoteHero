@@ -144,7 +144,7 @@ NoteHero's rendering and search indexing can be configured by adding the above b
     Extension is omitted. Individual words are separated, first letter is capitalized and then they are concatenated by adding single space in between.
     For example, `hello_world.md` becomes `Hello World`.
     - **For filenames with spaces**:
-    Extension is omitted. For example, `Hello world.md` becomes `Hello world`.
+    Extension is omitted. Individual words are separated, first letter is capitalized and then they are concatenated by adding single space in between. For example, `Hello world.md` becomes `Hello World`.
 - `sudo` (Boolean): Defines the visibility of the note. If `true`, note is only visible when logged in, else it is publicly visible. **Defaults to `true`**.
 - `slug` (String): Used in the URL of the final note. The format of the URL is as follows: `/cat1/cat2/.../catn/slug` where `cat1`, `cat2`, etc. are the `categories` in the YAML Front Matter.
 \

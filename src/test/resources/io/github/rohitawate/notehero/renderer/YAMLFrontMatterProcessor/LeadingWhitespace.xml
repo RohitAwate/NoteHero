@@ -17,12 +17,11 @@
 
 <YFMTestCase>
 	<full>
+
+
 		---
 		notehero:
-		title: "Convolutional Neural Networks"
 		sudo: false
-		slug: "cnn"
-		categories: "CS > Deep Learning"
 		---
 
 		### HPC: Unit 5
@@ -38,10 +37,7 @@
 	</full>
 	<expectedYFM>
 		notehero:
-		title: "Convolutional Neural Networks"
 		sudo: false
-		slug: "cnn"
-		categories: "CS > Deep Learning"
 	</expectedYFM>
 	<expectedNote>
 		### HPC: Unit 5
@@ -55,4 +51,14 @@
 		Parallel Depth-First Search, Parallel Best-First Search
 		---
 	</expectedNote>
+	<filePath>/home/notehero/notes/CS/Deep Learning/CNN.md</filePath>
+	<expectedConfig>
+		<title>CNN</title>
+		<sudo>false</sudo>
+		<slug>cnn</slug>
+		<categories>
+			<categories>CS</categories>
+			<categories>Deep Learning</categories>
+		</categories>
+	</expectedConfig>
 </YFMTestCase>

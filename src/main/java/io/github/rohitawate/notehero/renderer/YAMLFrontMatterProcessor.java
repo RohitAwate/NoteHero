@@ -168,6 +168,9 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// extract filename
 		String fileName = getFileName(filePath);
 
+		// For files with no names
+		if (fileName.isEmpty()) return "Untitled";
+
 		// identify fileName type
 		// - fileName with spaces
 		// - snake_case
@@ -177,33 +180,68 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		StringBuilder titleBuilder = new StringBuilder();
 		if (fileName.contains(" ")) {
-			// example: 'Hello world' becomes 'Hello world' thus preserving the case
-			// of each word
+			// example: 'Hello world' becomes 'Hello World'
 			String[] tokens = fileName.split("\\s+");
 
-			for (String token : tokens) {
-				titleBuilder.append(token);
-				titleBuilder.append(" ");
+			for (int i = 0; i < tokens.length; i++) {
+				String token = tokens[i];
+				token = token.toLowerCase();
+				titleBuilder.append(Character.toUpperCase(token.charAt(0))).append(token.substring(1));
+
+
+				// don't add a space for last token
+				if (i != tokens.length - 1) {
+					titleBuilder.append(" ");
+				}
 			}
 		} else if (fileName.contains("_")) {
 			// example: 'hello_Word' becomes 'Hello World'
 			String[] tokens = fileName.split("_");
 
-			for (String token : tokens) {
+			for (int i = 0; i < tokens.length; i++) {
+				String token = tokens[i];
 				token = token.toLowerCase();
 				titleBuilder.append(Character.toUpperCase(token.charAt(0))).append(token.substring(1));
-				titleBuilder.append(" ");
+
+				// don't add a space for last token
+				if (i != tokens.length - 1) {
+					titleBuilder.append(" ");
+				}
 			}
 		} else {
+			// Handle CamelCase
 			// example: 'HelloWorld' becomes 'Hello World'
 			char c;
 			for (int i = 0; i < fileName.length(); i++) {
 				c = fileName.charAt(i);
-				if (i != 0 && Character.isUpperCase(c)) {
+				/*
+					First, we obviously check if the current character is in uppercase so that we can add a
+					space before it.
+
+					Next, we check if c is not the first character in the string. If it is, we do not add a
+					space since it would result in "HelloWorld" being converted to " Hello World" i.e. a
+					leading whitespace.
+
+					Lastly, we check if the string has any more characters. If it does, we check if the next character
+					is lowercase, so that we don't add a whitespace between two uppercase characters. This ensures that
+					acronyms such as "DNA" don't get converted to "D N A".
+				 */
+				if (Character.isUpperCase(c) && i != 0 &&
+						(i + 1) < fileName.length() && Character.isLowerCase(fileName.charAt(i + 1))) {
 					titleBuilder.append(" ");
 				}
 
 				titleBuilder.append(c);
+			}
+
+			// Check if the resultant string had just one word
+			// and that it starts with an alphabet.
+			// For example, "hello" remains "hello" by the previous logic.
+			// Thus, we convert the first character to uppercase.
+			String result = titleBuilder.toString();
+			if (!result.contains(" ")) {
+				result = Character.toUpperCase(result.charAt(0)) + result.substring(1);
+				return result;
 			}
 		}
 
@@ -233,10 +271,10 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// starting after notes/.
 		filePath = filePath.substring(filePath.indexOf("notes/") + 6);
 
-		// If the note resides within notes/, then filePath should
-		// be empty by now and thus leave no room for us to deduce
-		// any categories. We return an empty string array.
-		if (filePath.isEmpty()) return new String[]{};
+		// If the note resides within notes/, then filePath should only
+		// contain the its filename and thus leave no room for us to
+		// deduce any categories. We return an empty string array.
+		if (filePath.equals(getFileName(filePath))) return new String[]{};
 
 		// Else, note resides within some directory hierarchy within notes/.
 		// In this case, we extract the directory names to build up
@@ -252,6 +290,8 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			// Push to stack since our category hierarchy
 			// is the reverse of the directories'
 			categoryStack.push(category);
+
+			fd = fd.getParentFile();
 		}
 
 		String[] categories = new String[categoryStack.size()];
@@ -280,17 +320,25 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			// of each word
 			String[] tokens = fileName.split("\\s+");
 
-			for (String token : tokens) {
-				slugBuilder.append(token.toLowerCase());
-				slugBuilder.append("-");
+			for (int i = 0; i < tokens.length; i++) {
+				slugBuilder.append(tokens[i].toLowerCase());
+
+				// don't add a hyphen for last token
+				if (i != tokens.length - 1) {
+					slugBuilder.append("-");
+				}
 			}
 		} else if (fileName.contains("_")) {
 			// example: 'hello_Word' becomes 'hello-world'
 			String[] tokens = fileName.split("_");
 
-			for (String token : tokens) {
-				slugBuilder.append(token.toLowerCase());
-				slugBuilder.append("-");
+			for (int i = 0; i < tokens.length; i++) {
+				slugBuilder.append(tokens[i].toLowerCase());
+
+				// don't add a hyphen for last token
+				if (i != tokens.length - 1) {
+					slugBuilder.append("-");
+				}
 			}
 		} else {
 			// example: 'HelloWorld' becomes 'hello-world'
@@ -301,7 +349,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 					slugBuilder.append("-");
 				}
 
-				slugBuilder.append(c);
+				slugBuilder.append(Character.toLowerCase(c));
 			}
 		}
 

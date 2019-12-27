@@ -43,4 +43,14 @@
 		Parallel Depth-First Search, Parallel Best-First Search
 		---
 	</expectedNote>
+	<filePath>/home/notehero/notes/CS/High Performance Computing/BuildingAParallelAlgorithm.md</filePath>
+	<expectedConfig>
+		<title>Building a Parallel Algorithm</title>
+		<sudo>true</sudo>
+		<slug>parallel-algorithms</slug>
+		<categories>
+			<categories>CS</categories>
+			<categories>High Performance Computing</categories>
+		</categories>
+	</expectedConfig>
 </YFMTestCase>

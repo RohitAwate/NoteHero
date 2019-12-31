@@ -18,7 +18,8 @@ package io.github.rohitawate.notehero.text;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CaseFormatTest {
 
@@ -69,28 +70,44 @@ class CaseFormatTest {
 
 	@Test
 	void convertTo() {
-	}
+		assertEquals("Hello World", CaseFormat.convertTo("hello_world", CaseFormat.TITLE));
+		assertEquals("HelloWorld", CaseFormat.convertTo("hello_world", CaseFormat.UPPER_CAMEL));
+		assertEquals("helloWorld", CaseFormat.convertTo("hello_world", CaseFormat.LOWER_CAMEL));
+		assertEquals("HELLO_WORLD", CaseFormat.convertTo("hello_world", CaseFormat.UPPER_SNAKE));
+		assertEquals("hello_world", CaseFormat.convertTo("hello_world", CaseFormat.LOWER_SNAKE));
+		assertEquals("HeLLo_WOrld", CaseFormat.convertTo("HeLLo-WOrld", CaseFormat.MIXED_SNAKE));
+		assertEquals("HELLO-WORLD", CaseFormat.convertTo("hello_world", CaseFormat.UPPER_HYPHENATED));
+		assertEquals("hello-world", CaseFormat.convertTo("hello_world", CaseFormat.LOWER_HYPHENATED));
+		assertEquals("HeLLo-WOrld", CaseFormat.convertTo("HeLLo WOrld", CaseFormat.MIXED_HYPHENATED));
 
-	@Test
-	void identifyCaseFormat() {
-		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("hello world_0"));
-		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("काहीही हा श्री"));
-		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("hello world!"));
-		assertNotEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("helloWorld"));
+		assertEquals("Building a Canoe", CaseFormat.convertTo("BuildingACanoe", CaseFormat.TITLE));
+		assertEquals("BuildingACanoe", CaseFormat.convertTo("BuildingACanoe", CaseFormat.UPPER_CAMEL));
+		assertEquals("buildingACanoe", CaseFormat.convertTo("BuildingACanoe", CaseFormat.LOWER_CAMEL));
+		assertEquals("BUILDING_A_CANOE", CaseFormat.convertTo("BuildingACanoe", CaseFormat.UPPER_SNAKE));
+		assertEquals("building_a_canoe", CaseFormat.convertTo("BuildingACanoe", CaseFormat.LOWER_SNAKE));
+		assertEquals("builDing_A_cANOe", CaseFormat.convertTo("builDing A cANOe", CaseFormat.MIXED_SNAKE));
+		assertEquals("building-a-canoe", CaseFormat.convertTo("BuildingACanoe", CaseFormat.LOWER_HYPHENATED));
+		assertEquals("BUILDING-A-CANOE", CaseFormat.convertTo("BuildingACanoe", CaseFormat.UPPER_HYPHENATED));
+		assertEquals("builDing-A-cANOe", CaseFormat.convertTo("builDing A cANOe", CaseFormat.MIXED_HYPHENATED));
 
-		assertNotEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("__"));
-		assertEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("HELLO_WORLD!"));
-		assertEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("123_123H"));
-		assertEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("{H}_H"));
-		assertNotEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("{H}__h"));
+		assertEquals("Web Development with Django", CaseFormat.convertTo("web_development_with_django", CaseFormat.TITLE));
+		assertEquals("WebDevelopmentWithDjango", CaseFormat.convertTo("web_development_with_django", CaseFormat.UPPER_CAMEL));
+		assertEquals("webDevelopmentWithDjango", CaseFormat.convertTo("web_development_with_django", CaseFormat.LOWER_CAMEL));
+		assertEquals("WEB_DEVELOPMENT_WITH_DJANGO", CaseFormat.convertTo("WebDevelopmentWithDjango", CaseFormat.UPPER_SNAKE));
+		assertEquals("web_development_with_django", CaseFormat.convertTo("webDevelopmentWithDjango", CaseFormat.LOWER_SNAKE));
+		assertEquals("wEb_DeveLOPment_wiTH_DjangO", CaseFormat.convertTo("wEb_DeveLOPment_wiTH_DjangO", CaseFormat.MIXED_SNAKE));
+		assertEquals("WEB-DEVELOPMENT-WITH-DJANGO", CaseFormat.convertTo("web_development_with_django", CaseFormat.UPPER_HYPHENATED));
+		assertEquals("web-development-with-django", CaseFormat.convertTo("web deveLopment With django", CaseFormat.LOWER_HYPHENATED));
+		assertEquals("wEb-DeveLOPment-wiTH-DjangO", CaseFormat.convertTo("wEb_DeveLOPment_wiTH_DjangO", CaseFormat.MIXED_HYPHENATED));
 
-		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("hello_world!"));
-		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("123_123h"));
-		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("{h}_h"));
-		assertNotEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("{h}__H"));
-	}
-
-	@Test
-	void identifyCase() {
+		assertEquals("I'm Going to D23", CaseFormat.convertTo("I'm going to D23", CaseFormat.TITLE));
+		assertEquals("IAmGoingToD23", CaseFormat.convertTo("i_am_going_to_d23", CaseFormat.UPPER_CAMEL));
+		assertEquals("iAmGoingToD23", CaseFormat.convertTo("IAmGoingToD23", CaseFormat.LOWER_CAMEL));
+		assertEquals("I_AM_GOING_TO_D23", CaseFormat.convertTo("i-am-going-to-d23", CaseFormat.UPPER_SNAKE));
+		assertEquals("i_am_going_to_d23", CaseFormat.convertTo("iAmGoingToD23", CaseFormat.LOWER_SNAKE));
+		assertEquals("i_aM_goIng_tO_d23", CaseFormat.convertTo("i aM goIng tO d23", CaseFormat.MIXED_SNAKE));
+		assertEquals("I-AM-GOING-TO-D23", CaseFormat.convertTo("i_aM_goIng_tO_d23", CaseFormat.UPPER_HYPHENATED));
+		assertEquals("i-am-going-to-d23", CaseFormat.convertTo("i am going to d23", CaseFormat.LOWER_HYPHENATED));
+		assertEquals("i-am-going-to-d23", CaseFormat.convertTo("i-am-going-to-d23", CaseFormat.MIXED_HYPHENATED));
 	}
 }

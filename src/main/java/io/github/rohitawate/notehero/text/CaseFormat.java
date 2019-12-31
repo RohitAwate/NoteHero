@@ -16,8 +16,16 @@
 
 package io.github.rohitawate.notehero.text;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -34,16 +42,127 @@ public enum CaseFormat {
 	MIXED_HYPHENATED,   // fOo-BaR
 	TITLE;              // foo bar
 
-	public static String convertTo(CaseFormat targetCaseFormat, String source) {
+	private static Set<String> englishStopWords;
+
+	/**
+	 * Converts the source string to another case format.
+	 *
+	 * @param source           The source string
+	 * @param targetCaseFormat The case format to which the string is to be converted
+	 * @return The equivalent string in the target case format
+	 */
+	public static String convertTo(String source, CaseFormat targetCaseFormat) {
 		// identify source's case
 		CaseFormat sourceCaseFormat = identifyCaseFormat(source);
+
+		/*
+			 If the source formats are same, we return the same string
+			 The only exception is Title case which may alter the capitalization
+			 of some words.
+		*/
+		if (sourceCaseFormat == targetCaseFormat && targetCaseFormat != TITLE)
+			return source;
 
 		// tokenize
 		String[] tokens = tokenize(source, sourceCaseFormat);
 
-		// build
+		// build final string
+		StringBuilder builder = new StringBuilder();
 
-		return "";
+		boolean stopWordsLoaded = englishStopWords != null;
+		// Stop words are needed only for title case
+		if (!stopWordsLoaded && targetCaseFormat == TITLE) {
+			try {
+				loadEnglishStopWords();
+				stopWordsLoaded = true;
+			} catch (IOException | URISyntaxException e) {
+				Logger.getGlobal().warning("Could not load stop words corpus");
+			}
+		}
+
+		switch (targetCaseFormat) {
+			case TITLE:
+				builder.append(Character.toUpperCase(tokens[0].charAt(0)));
+				builder.append(tokens[0].substring(1));
+
+				for (int i = 1; i < tokens.length; i++) {
+					builder.append(' ');
+
+					if (stopWordsLoaded && englishStopWords.contains(tokens[i].toLowerCase())) {
+						builder.append(tokens[i].toLowerCase());
+					} else {
+						builder.append(Character.toUpperCase(tokens[i].charAt(0)));
+						builder.append(tokens[i].substring(1));
+					}
+				}
+				break;
+			case UPPER_CAMEL:
+				for (String token : tokens) {
+					builder.append(Character.toUpperCase(token.charAt(0)));
+					builder.append(token.substring(1));
+				}
+				break;
+			case LOWER_CAMEL:
+				builder.append(Character.toLowerCase(tokens[0].charAt(0)));
+				builder.append(tokens[0].substring(1));
+
+				for (int i = 1; i < tokens.length; i++) {
+					builder.append(Character.toUpperCase(tokens[i].charAt(0)));
+					builder.append(tokens[i].substring(1));
+				}
+				break;
+			case UPPER_SNAKE:
+				for (String token : tokens) {
+					builder.append(token.toUpperCase());
+					builder.append('_');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+			case LOWER_SNAKE:
+				for (String token : tokens) {
+					builder.append(token.toLowerCase());
+					builder.append('_');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+			case MIXED_SNAKE:
+				for (String token : tokens) {
+					builder.append(token);
+					builder.append('_');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+			case UPPER_HYPHENATED:
+				for (String token : tokens) {
+					builder.append(token.toUpperCase());
+					builder.append('-');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+			case LOWER_HYPHENATED:
+				for (String token : tokens) {
+					builder.append(token.toLowerCase());
+					builder.append('-');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+			case MIXED_HYPHENATED:
+				for (String token : tokens) {
+					builder.append(token);
+					builder.append('-');
+				}
+				builder.replace(builder.length() - 1, builder.length(), "");
+				break;
+		}
+
+		return builder.toString();
+	}
+
+	private static void loadEnglishStopWords() throws IOException, URISyntaxException {
+		URL url = CaseFormat.class.getResource("EnglishStopWords.txt");
+		Path path = Paths.get(url.toURI());
+		String[] stopWords = new String(Files.readAllBytes(path)).split("\n+");
+		englishStopWords = new HashSet<>(Arrays.asList(stopWords));
 	}
 
 	/**

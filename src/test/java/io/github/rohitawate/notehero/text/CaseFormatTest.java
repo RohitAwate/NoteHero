@@ -24,9 +24,20 @@ class CaseFormatTest {
 
 	@Test
 	void tokenize() {
+		assertArrayEquals(new String[]{"making", "PBJ", "Sandwich", "In", "10", "Minutes"}, CaseFormat.tokenize("makingPBJSandwichIn10Minutes", CaseFormat.LOWER_CAMEL));
+		assertArrayEquals(new String[]{"a", "Study", "In", "Pink"}, CaseFormat.tokenize("aStudyInPink", CaseFormat.LOWER_CAMEL));
+		assertArrayEquals(new String[]{"app", "Market"}, CaseFormat.tokenize("appMarket", CaseFormat.LOWER_CAMEL));
+		assertArrayEquals(new String[]{"A", "Study", "In", "Pink"}, CaseFormat.tokenize("AStudyInPink", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"IIFA", "Magic"}, CaseFormat.tokenize("IIFAMagic", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"I", "Am", "Batman"}, CaseFormat.tokenize("IAmBatman", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"Building", "A", "Canoe"}, CaseFormat.tokenize("BuildingACanoe", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"Am", "IIFA"}, CaseFormat.tokenize("AmIIFA", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"MP4"}, CaseFormat.tokenize("MP4", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"Big", "Hero", "6"}, CaseFormat.tokenize("BigHero6", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"USA", "12", "Cities", "Tour"}, CaseFormat.tokenize("USA12CitiesTour", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"121", "Web", "Hosting"}, CaseFormat.tokenize("121WebHosting", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"Java", "8", "Tutorial"}, CaseFormat.tokenize("Java8Tutorial", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"PS4", "Tutorial"}, CaseFormat.tokenize("PS4Tutorial", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"PS", "4", "Tutorial"}, CaseFormat.tokenize("PS4Tutorial", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"Java", "11", "Tutorial"}, CaseFormat.tokenize("Java11Tutorial", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"D23"}, CaseFormat.tokenize("D23", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"Jan", "15"}, CaseFormat.tokenize("Jan15", CaseFormat.UPPER_CAMEL));
@@ -34,16 +45,6 @@ class CaseFormatTest {
 		assertArrayEquals(new String[]{"TC39"}, CaseFormat.tokenize("TC39", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"SLF4J"}, CaseFormat.tokenize("SLF4J", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"1", "Direction"}, CaseFormat.tokenize("1Direction", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"IIFA", "Magic"}, CaseFormat.tokenize("IIFAMagic", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"a", "Study", "In", "Pink"}, CaseFormat.tokenize("aStudyInPink", CaseFormat.LOWER_CAMEL));
-		assertArrayEquals(new String[]{"A", "Study", "In", "Pink"}, CaseFormat.tokenize("AStudyInPink", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"app", "Market"}, CaseFormat.tokenize("appMarket", CaseFormat.LOWER_CAMEL));
-		assertArrayEquals(new String[]{"I", "Am", "Batman"}, CaseFormat.tokenize("IAmBatman", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"Building", "A", "Canoe"}, CaseFormat.tokenize("BuildingACanoe", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"MP4"}, CaseFormat.tokenize("MP4", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"Am", "IIFA"}, CaseFormat.tokenize("AmIIFA", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"Big", "Hero", "6"}, CaseFormat.tokenize("BigHero6", CaseFormat.UPPER_CAMEL));
-		assertArrayEquals(new String[]{"USA", "12", "Cities", "Tour"}, CaseFormat.tokenize("USA12CitiesTour", CaseFormat.UPPER_CAMEL));
 	}
 
 	@Test

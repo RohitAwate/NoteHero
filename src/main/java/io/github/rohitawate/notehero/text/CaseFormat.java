@@ -16,7 +16,6 @@
 
 package io.github.rohitawate.notehero.text;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -145,253 +144,44 @@ public enum CaseFormat {
 	 * @return String array of tokens
 	 */
 	private static String[] tokenizeCamelCase(String source) {
-		ArrayList<String> buffer = new ArrayList<>();
-		int currentCodePoint;
-		int start = 0;
-
-		int sourceLen = source.length();
-		for (int i = 0; i < sourceLen; i++) {
-			currentCodePoint = source.codePointAt(i);
-
-			if (Character.isAlphabetic(currentCodePoint) && Character.isUpperCase(currentCodePoint)) {
-				if (canAddPrevious(i, start, source)) {
-					buffer.add(source.substring(start, i));
-					start = i;
-				}
-
-				if (isNextUpper(i, source) && isCurrentSingle(i, start, source)) {
-					buffer.add(Character.toString(source.charAt(i)));
-					start = i + 1;
-				}
-			} else if (Character.isDigit(currentCodePoint)) {
-				/*
-				 * Dealing with numbers in CamelCase requires observation of the
-				 * previous and next code points in the string, if available. This is
-				 * so because whether or not we separate the number into its own string
-				 * depends on those neighbouring code points.
-				 */
-				int prevCodePoint, nextCodePoint;
-				boolean prevIsDigit, nextIsDigit;
-
-				// Checking upper limit of range
-				if (i <= sourceLen - 2) {
-					nextCodePoint = source.codePointAt(i + 1);
-					nextIsDigit = Character.isDigit(nextCodePoint);
-				} else continue;
-
-				// Checking lower limit of range
-				if (i > 0) {
-					prevCodePoint = source.codePointAt(i - 1);
-					prevIsDigit = Character.isDigit(prevCodePoint);
-				} else {
-					/*
-						 For a digit at i = 0, we need to check if the next code point is a digit as well. That would
-						 imply that there are more digits to the number. In this case, we continue exploring the number.
-						 For example: 121WebHosting
-
-						 If that is not the case, and the next code point is something other than a digit,
-						 we add the current code point to the buffer. For example: 1Direction
-					*/
-					if (!nextIsDigit) {
-						buffer.add(Character.toString(source.charAt(i)));
-						start = i + 1;
-					}
-
-					continue;
-				}
-
-				// Some useful booleans
-				boolean prevIsAlpha = Character.isAlphabetic(prevCodePoint);
-				boolean nextIsAlpha = Character.isAlphabetic(nextCodePoint);
-
-				boolean prevIsUpper = Character.isUpperCase(prevCodePoint);
-				boolean nextIsUpper = Character.isUpperCase(nextCodePoint);
-
-				/*
-					If next code point is a digit and the previous is not, we might want to add the previous
-					[start, i) code points to the buffer.
-				 */
-				if (nextIsDigit) {
-					/*
-						We also need to check if the number is not part of some acronym.
-						For example, Jan15 or D23.
-
-						For this we check if the previous code point is alphabetic and not lowercase.
-						We only add the previous [start, i) if this condition fails.
-						For example: The first '1' from Java11Tutorial
-					 */
-					if (!prevIsDigit && prevIsAlpha && !prevIsUpper) {
-						buffer.add(source.substring(start, i));
-						start = i;
-					}
-				} else {
-					if (prevIsDigit) {
-						/*
-							If next is not a digit, we can add the substring [start, i] to the
-							buffer.
-
-							For example: The second '1' from Java11Tutorial
-					 	*/
-						buffer.add(source.substring(start, i + 1));
-						start = i + 1;
-					} else {
-						/*
-						 	Here, the numeric code point is sandwiched between two non-numeric
-						 	code points. For example: ID3T, Java8Tutorial or PS4Tutorial.
-
-						 	The difference in the two examples is that for the first one, the
-						 	numeric code point is part of an acronym while in the second one
-						 	it is an individual number. We can resolve this by checking the
-						 	if the previous and next code points are alphabetic and subsequently,
-						 	their cases.
-
-						 	If previous is lowercase and next is uppercase, we add the single number
-						 	to the buffer. (Java8Tutorial)
-
-						 	Before that we check if any substring [start, i) is pending to be added
-						 	and do so.
-						 */
-						if (prevIsAlpha && !prevIsUpper && nextIsAlpha && nextIsUpper) {
-							if (start != i) {
-								buffer.add(source.substring(start, i));
-							}
-
-							buffer.add(Character.toString(source.charAt(i)));
-							start = i + 1;
-						}
-
-						/*
-							If both are uppercase, we need to check if the (i + 2) character exists.
-
-							If it does and is lowercase, then we are in the PS4Tutorial case. Here, the substring
-							[start, i] must be added to the buffer.
-
-							We concur that the number is part of an acronym if the (i + 2) character does not exist
-							or if it exists and is uppercase.
-						 */
-
-						else if (i + 2 <= sourceLen - 2 && Character.isLowerCase(source.codePointAt(i + 2))) {
-							buffer.add(source.substring(start, i + 1));
-							start = i + 1;
-						}
-					}
-				}
-			}
-		}
-
-		// Add the remaining part of the string
-		buffer.add(source.substring(start));
-
-		return buffer.toArray(new String[0]);
-	}
-
-	/**
-	 * Delegate for tokenizeCamelCase.
-	 * <p>
-	 * Determines whether there exists a next code point and if
-	 * is upper case.
-	 *
-	 * @param current The current position in the string
-	 * @param source  The source string
-	 * @return true if exists and is upper, else false
-	 */
-	private static boolean isNextUpper(int current, String source) {
-		// Check if next code point actually exists
-		if (current + 1 >= source.length()) return false;
-
-		// If exists, check if it is upper
-		return Character.isUpperCase(source.codePointAt(current + 1));
-	}
-
-	/**
-	 * Delegate for tokenizeCamelCase.
-	 * <p>
-	 * Determines whether the current alphabetic code point at the current
-	 * index is a single letter word i.e. "I" or "A".
-	 *
-	 * @param current The current position in the string
-	 * @param start   The starting index for the next string to be added
-	 * @param source  The source string
-	 * @return true if single word, else false
-	 */
-	private static boolean isCurrentSingle(int current, int start, String source) {
-		int currentCodePoint = source.codePointAt(current);
-
-		// "I" and "A" are the only single letter words in the English language.
-		if (currentCodePoint != 'I' && currentCodePoint != 'A') return false;
-
 		/*
-			We have already established that the next is upper.
-		 	This means that "I" or "A" could be one of the following:
-		 	 - A single word, as mentioned in the comment above
-		 	 	For example: BuildingACanoe, IAmBatman, etc.
-		 	 - Part of an acronym.
-		 	   	For example: IIFAMagic, IBM, AAPL, etc.
+			 This regex powered implementation is probably not the fastest
+			 or most efficient. What it is, is readable and concise.
+			 This is inspired by the StackOverflow answer here:
+			 https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-sentence-case-text
 
-		 	We can determine which of the above cases we're looking at by checking if
-		 	the second next i.e. (current + 2) character is alphabetic and lowercase.
-			For example:
-				- BuildingACanoe: When we're at 'A', 'C' i.e. next is uppercase.
-				(current + 2) is 'a' which is lowercase and thus this falls in the first case.
-				- IBM: When we're at 'I', 'B' i.e. next is uppercase. (current + 2) is 'M'
-				which is uppercase and thus falls in the second case.
-				- ID3T: When we're at 'I', 'D' i.e. next is uppercase. (current + 2) is '3'
-				which is not alphabetic and thus is not a single word.
-
-			In the case of a single word we do nothing. Hence, we only try to detect the second one.
-			However, we also need to check if the "I" or "A" is not part of a continuing acronym.
-			This can be done by checking if start == current.
-
-			We also need to ensure that we're not violating the string's range. It should have the
-			(current + 2) character. If it doesn't, it must be an acronym since "I" and "A" cannot
-			appear next to each other in the English language.
+			 For the previous parser-style implementation, check this commit:
+			 https://github.com/RohitAwate/NoteHero/commit/aec96d38a9cbfbfdb4cc018393e52fb0ae63d900
 		*/
 
-		if (start != current) return false;
+		source = source
+				// aStudyInPink -> a Study InPink
+				.replaceAll("([a-z])([A-Z][a-z])", "$1 $2")
 
-		int nextNext = current + 2;
-		if (nextNext > source.length() - 2) return false;
+				// makingPBJQuickly -> making PBJ Quickly
+				.replaceAll("([a-z])([A-Z]+)([A-Z][a-z])", "$1 $2 $3")
 
-		int nextNextCodePoint = source.codePointAt(nextNext);
-		return Character.isAlphabetic(nextNextCodePoint) && Character.isLowerCase(nextNextCodePoint);
-	}
+				// InBengal -> In Bengal
+				.replaceAll("([A-Z][a-z])([A-Z])", "$1 $2")
 
-	/**
-	 * Delegate for tokenizeCamelCase.
-	 * <p>
-	 * Decides whether the previous substring i.e. [start, current)
-	 * can be added to the buffer.
-	 *
-	 * @param current The current position in the string
-	 * @param start   The starting index for the next string to be added
-	 * @param source  The source string
-	 * @return true if can be added, else false
-	 */
-	private static boolean canAddPrevious(int current, int start, String source) {
-		/*
-			 We can add the the previous substring i.e. [start, current) to buffer
-			 when the following conditions are met:
-			 	- 0 < current < sourceLen - 2
-			 	 	This means that we're not at the first or last code points of the string.
-			 	 	This ensures that we're not violating the range for the second condition.
-			 	- either previous or next code points are alphabetic and lower case
-			 		This means that we're not part of an acronym.
-			 	- start != current
-			 		We don't add a single character here since that is isCurrentSingle's responsibility
-		*/
+				// BuildingACanoe -> Building A Canoe
+				.replaceAll("([a-z])([AI])([A-Z][a-z])", "$1 $2 $3")
 
-		if (0 >= current || current >= source.length() - 2) return false;
+				// AStudy -> A Study
+				.replaceAll("([AI])([A-Z][a-z])", "$1 $2")
 
-		int prev = source.codePointAt(current - 1);
-		int next = source.codePointAt(current + 1);
+				// BigHero6 -> Big Hero 6
+				.replaceAll("([a-z])([0-9])", "$1 $2")
 
-		if (!Character.isAlphabetic(prev) || !Character.isAlphabetic(next))
-			return false;
+				// USA12CitiesTour -> USA 12 Cities Tour
+				.replaceAll("([A-Z]+)([0-9]+)([A-Z][a-z])", "$1 $2 $3")
 
-		if (Character.isUpperCase(prev) && Character.isUpperCase(next))
-			return false;
+				// 121WebHosting -> 121 Web Hosting
+				.replaceAll("([0-9]+)([A-Z][a-z])", "$1 $2")
 
-		return start != current;
+				.trim();
+
+		return source.split("\\s+");
 	}
 
 	/**

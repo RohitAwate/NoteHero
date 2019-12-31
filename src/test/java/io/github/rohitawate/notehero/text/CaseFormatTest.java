@@ -24,10 +24,11 @@ class CaseFormatTest {
 
 	@Test
 	void tokenize() {
+		// UpperCamelCase and lowerCamelCase
 		assertArrayEquals(new String[]{"making", "PBJ", "Sandwich", "In", "10", "Minutes"}, CaseFormat.tokenize("makingPBJSandwichIn10Minutes", CaseFormat.LOWER_CAMEL));
 		assertArrayEquals(new String[]{"a", "Study", "In", "Pink"}, CaseFormat.tokenize("aStudyInPink", CaseFormat.LOWER_CAMEL));
 		assertArrayEquals(new String[]{"app", "Market"}, CaseFormat.tokenize("appMarket", CaseFormat.LOWER_CAMEL));
-		assertArrayEquals(new String[]{"A", "Study", "In", "Pink"}, CaseFormat.tokenize("AStudyInPink", CaseFormat.UPPER_CAMEL));
+		assertArrayEquals(new String[]{"A", "Study", "In", "Pink"}, CaseFormat.tokenize("AStudyInPink    ", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"IIFA", "Magic"}, CaseFormat.tokenize("IIFAMagic", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"I", "Am", "Batman"}, CaseFormat.tokenize("IAmBatman", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"Building", "A", "Canoe"}, CaseFormat.tokenize("BuildingACanoe", CaseFormat.UPPER_CAMEL));
@@ -45,6 +46,25 @@ class CaseFormatTest {
 		assertArrayEquals(new String[]{"TC39"}, CaseFormat.tokenize("TC39", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"SLF4J"}, CaseFormat.tokenize("SLF4J", CaseFormat.UPPER_CAMEL));
 		assertArrayEquals(new String[]{"1", "Direction"}, CaseFormat.tokenize("1Direction", CaseFormat.UPPER_CAMEL));
+
+		// UPPER_SNAKE_CASE and lower_snake_case
+		assertArrayEquals(new String[]{"building", "a", "canoe"}, CaseFormat.tokenize("building_a_canoe", CaseFormat.LOWER_SNAKE));
+		assertArrayEquals(new String[]{"something", "weird"}, CaseFormat.tokenize("something__weird", CaseFormat.LOWER_SNAKE));
+		assertArrayEquals(new String[]{"classic", "123"}, CaseFormat.tokenize("_______classic_123_", CaseFormat.LOWER_SNAKE));
+		assertArrayEquals(new String[]{"KASA", "KAY", "PUNE"}, CaseFormat.tokenize("KASA_KAY_PUNE   ", CaseFormat.UPPER_SNAKE));
+		assertArrayEquals(new String[]{"AVENGERS", "2", "AgeOfUltron"}, CaseFormat.tokenize("__AVENGERS_2_AgeOfUltron_", CaseFormat.MIXED_SNAKE));
+
+		// UPPER_HYPHENATED_CASE and lower_hyphen_case
+		assertArrayEquals(new String[]{"building", "a", "canoe"}, CaseFormat.tokenize("building-a-canoe", CaseFormat.LOWER_HYPHENATED));
+		assertArrayEquals(new String[]{"something", "weird"}, CaseFormat.tokenize("something--weird", CaseFormat.LOWER_HYPHENATED));
+		assertArrayEquals(new String[]{"classic", "123"}, CaseFormat.tokenize("-------classic-123-", CaseFormat.LOWER_HYPHENATED));
+		assertArrayEquals(new String[]{"KASA", "KAY", "PUNE"}, CaseFormat.tokenize("KASA-KAY-PUNE  ", CaseFormat.UPPER_HYPHENATED));
+		assertArrayEquals(new String[]{"AVENGERS", "2", "Age", "OF_ULTRON"}, CaseFormat.tokenize("--AVENGERS-2-Age-OF_ULTRON-", CaseFormat.MIXED_HYPHENATED));
+
+		// Title Case
+		assertArrayEquals(new String[]{"Building", "a", "Canoe"}, CaseFormat.tokenize("Building     a Canoe", CaseFormat.TITLE));
+		assertArrayEquals(new String[]{"Hello", "world"}, CaseFormat.tokenize("  Hello world", CaseFormat.TITLE));
+		assertArrayEquals(new String[]{"leading", "and", "trailing", "spaces"}, CaseFormat.tokenize("  leading and trailing spaces   ", CaseFormat.TITLE));
 	}
 
 	@Test

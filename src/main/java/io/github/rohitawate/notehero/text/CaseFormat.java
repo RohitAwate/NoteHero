@@ -16,6 +16,8 @@
 
 package io.github.rohitawate.notehero.text;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -126,7 +128,20 @@ public enum CaseFormat {
 					delimRegex = "";
 			}
 
-			return source.split(delimRegex);
+			source = source.trim();
+			ArrayList<String> tokens = new ArrayList<>(Arrays.asList(source.split(delimRegex)));
+
+			/*
+				Leading delimiter(s) may lead to empty tokens being generated.
+				For example: ___hello__world__ would generate "", "hello" and "world".
+
+				Thus, we check if the first first token is empty.
+			 */
+			if (tokens.get(0).isEmpty()) {
+				tokens.remove(0);
+			}
+
+			return tokens.toArray(new String[0]);
 		}
 
 		// CamelCase

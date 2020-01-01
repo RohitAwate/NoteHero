@@ -33,11 +33,15 @@ public class IngestionController {
 		this.candidateFiles = candidateFiles;
 	}
 
-	public void start() {
+	public void ingest() {
 		CountDownLatch latch = new CountDownLatch(candidateFiles.size());
 		ExecutorService executor = Executors.newCachedThreadPool();
-		candidateFiles.
-				forEach(candidate -> executor.execute(new IngestionThread(this, candidate, latch)));
+
+		IngestionThread[] threads = new IngestionThread[candidateFiles.size()];
+		for (int i = 0; i < candidateFiles.size(); i++) {
+			threads[i] = new IngestionThread(this, candidateFiles.get(i), latch);
+			executor.execute(threads[i]);
+		}
 
 		try {
 			latch.await();

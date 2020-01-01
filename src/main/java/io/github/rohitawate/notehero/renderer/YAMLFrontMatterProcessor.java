@@ -46,69 +46,37 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	}
 
 	/**
-	 * Tries to find the Front Matter delimiters i.e. three hyphens "---".
-	 * If both are found, removes this substring from the source and saves both.
-	 * If none or just one of them are found, errors are appended to the build log.
+	 * @return Stripped YAML Front Matter
 	 */
 	@Override
-	public void stripConfig() {
+	public String getConfigString() {
 		/*
-		 Check if stripConfig found no YAML Front Matter in a previous call.
-		 If true, we skip further calls here.
+		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
+		 if noFrontMatter is false (confirming the possibility). In that case,
+		 stripConfig is called to produce the return value.
 		*/
-		if (noFrontMatter) {
-			return;
+		if (yamlSource.isEmpty() && !noFrontMatter) {
+			stripConfig();
 		}
 
-		final String yfmDelimiter = "---";
+		return yamlSource;
+	}
 
-		// Get rid of leading/trailing whitespaces
-		noteSource = noteSource.trim();
-
-		// The source MUST start with the opening delimiter
-		if (!noteSource.startsWith(yfmDelimiter)) {
-			renderThread.logWarning("YAML Front Matter not found at start of file.");
-			noFrontMatter = true;
-			return;
+	/**
+	 * @return Note source stripped of YAML Front Matter
+	 */
+	@Override
+	public String getStrippedNote() {
+		/*
+		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
+		 if noFrontMatter is false (confirming the possibility). In that case,
+		 stripConfig is called to produce the return value.
+		*/
+		if (yamlSource.isEmpty() && !noFrontMatter) {
+			stripConfig();
 		}
 
-		/*
-		 The delimiters must be on separate lines.
-		 Thus, we ensure that the noteSource is more than the combined
-		 length of the opening delimiter (3) and the newline (1).
-		*/
-		if (noteSource.length() == 4) {
-			renderThread.logWarning("YAML Front Matter not terminated.");
-			noFrontMatter = true;
-			return;
-		}
-
-		/*
-		 Searching for closing delimiter from index 4 (3 hyphens + \n)
-		 to skip the opening one
-		*/
-		int end = noteSource.indexOf(yfmDelimiter, 4);
-		if (end == -1) {
-			renderThread.logWarning("YAML Front Matter not terminated.");
-			noFrontMatter = true;
-			return;
-		}
-
-		/*
-		 We only store the actual YAML thus skipping the
-		 opening delimiter (4 = 3 hyphens + newline)
-		*/
-		yamlSource = noteSource.substring(4, end);
-		yamlSource = yamlSource.trim();
-
-		/*
-		 We store the actual note stripped of the YAML Front Matter.
-		 It begins after the closing delimiter (3 hyphens).
-		 We trim to get rid of any whitespace between the Front Matter
-		 and the actual content.
-		*/
-		noteSource = noteSource.substring(end + 3);
-		noteSource = noteSource.trim();
+		return noteSource;
 	}
 
 	/**
@@ -186,6 +154,71 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		return config;
 	}
 
+	/**
+	 * Tries to find the Front Matter delimiters i.e. three hyphens "---".
+	 * If both are found, removes this substring from the source and saves both.
+	 * If none or just one of them are found, errors are appended to the build log.
+	 */
+	private void stripConfig() {
+		/*
+		 Check if stripConfig found no YAML Front Matter in a previous call.
+		 If true, we skip further calls here.
+		*/
+		if (noFrontMatter) {
+			return;
+		}
+
+		final String yfmDelimiter = "---";
+
+		// Get rid of leading/trailing whitespaces
+		noteSource = noteSource.trim();
+
+		// The source MUST start with the opening delimiter
+		if (!noteSource.startsWith(yfmDelimiter)) {
+			renderThread.logWarning("YAML Front Matter not found at start of file.");
+			noFrontMatter = true;
+			return;
+		}
+
+		/*
+		 The delimiters must be on separate lines.
+		 Thus, we ensure that the noteSource is more than the combined
+		 length of the opening delimiter (3) and the newline (1).
+		*/
+		if (noteSource.length() == 4) {
+			renderThread.logWarning("YAML Front Matter not terminated.");
+			noFrontMatter = true;
+			return;
+		}
+
+		/*
+		 Searching for closing delimiter from index 4 (3 hyphens + \n)
+		 to skip the opening one
+		*/
+		int end = noteSource.indexOf(yfmDelimiter, 4);
+		if (end == -1) {
+			renderThread.logWarning("YAML Front Matter not terminated.");
+			noFrontMatter = true;
+			return;
+		}
+
+		/*
+		 We only store the actual YAML thus skipping the
+		 opening delimiter (4 = 3 hyphens + newline)
+		*/
+		yamlSource = noteSource.substring(4, end);
+		yamlSource = yamlSource.trim();
+
+		/*
+		 We store the actual note stripped of the YAML Front Matter.
+		 It begins after the closing delimiter (3 hyphens).
+		 We trim to get rid of any whitespace between the Front Matter
+		 and the actual content.
+		*/
+		noteSource = noteSource.substring(end + 3);
+		noteSource = noteSource.trim();
+	}
+
 	private String generateDefaultTitle(String filePath) {
 		// extract filename
 		String fileName = getFileName(filePath);
@@ -241,8 +274,10 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			// Clean up the directory name
 			category = generateDefaultTitle(category);
 
-			// Push to stack since our category hierarchy
-			// is the reverse of the directories'
+			/*
+			 Push to stack since our category hierarchy
+			 is the reverse of the directories'
+			*/
 			categoryStack.push(CaseFormat.convertTo(category, CaseFormat.TITLE));
 
 			fd = fd.getParentFile();
@@ -288,39 +323,5 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	private NoteConfig generateDefaultConfig() {
 		return new NoteConfig(generateDefaultTitle(renderThread.filePath), generateDefaultCategories(),
 				generateDefaultSlug(renderThread.filePath), true);
-	}
-
-	/**
-	 * @return Note source stripped of YAML Front Matter
-	 */
-	@Override
-	public String getStrippedNote() {
-		/*
-		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
-		 if noFrontMatter is false (confirming the possibility). In that case,
-		 stripConfig is called to produce the return value.
-		*/
-		if (yamlSource.isEmpty() && !noFrontMatter) {
-			stripConfig();
-		}
-
-		return noteSource;
-	}
-
-	/**
-	 * @return Stripped YAML Front Matter
-	 */
-	@Override
-	public String getConfigString() {
-		/*
-		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
-		 if noFrontMatter is false (confirming the possibility). In that case,
-		 stripConfig is called to produce the return value.
-		*/
-		if (yamlSource.isEmpty() && !noFrontMatter) {
-			stripConfig();
-		}
-
-		return yamlSource;
 	}
 }

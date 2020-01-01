@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Rohit Awate.
+ * Copyright 2020 Rohit Awate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package io.github.rohitawate.notehero.renderer;
 
 /**
- * NoteRenderer defines the interface for
- * classes that render notes from any source format
- * to HTML.
+ * NoteRenderer defines the interface for renderers
+ * that produce HTML source from the note's source format.
  */
 interface NoteRenderer {
 	/**
@@ -30,6 +29,14 @@ interface NoteRenderer {
 	 * @return HTML source string
 	 */
 	String render();
+
+	/**
+	 * Returns the rendered HTML note.
+	 * Calls render if not already rendered.
+	 *
+	 * @return Rendered HTML string
+	 */
+	String getRenderedNote();
 
 	/**
 	 * Implementations should utilize a ConfigProcessor

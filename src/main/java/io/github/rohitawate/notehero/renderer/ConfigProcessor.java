@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Rohit Awate.
+ * Copyright 2020 Rohit Awate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,6 @@ package io.github.rohitawate.notehero.renderer;
  * of the note's source.
  */
 interface ConfigProcessor {
-	/**
-	 * Strips the configuration data substring
-	 * from the note's source.
-	 */
-	void stripConfig();
-
 	/**
 	 * The stripped configuration data is returned
 	 * here. If stripConfig() has not been called

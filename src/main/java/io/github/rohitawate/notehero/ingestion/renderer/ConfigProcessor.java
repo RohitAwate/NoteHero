@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.ingestion.renderer;
 
 /**
  * Delegate to NoteRenderer for processing

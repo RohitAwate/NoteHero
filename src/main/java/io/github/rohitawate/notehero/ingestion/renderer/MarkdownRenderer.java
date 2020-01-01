@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.ingestion.renderer;
 
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.gitlab.GitLabExtension;
@@ -23,6 +23,7 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import io.github.rohitawate.notehero.ingestion.IngestionThread;
 
 import java.util.Arrays;
 
@@ -35,11 +36,11 @@ class MarkdownRenderer implements NoteRenderer {
 	private NoteConfig config;
 	private String renderedNote;
 
-	private RenderThread renderThread;
+	private IngestionThread ingestionThread;
 
-	MarkdownRenderer(String noteSource, RenderThread renderThread) {
+	MarkdownRenderer(String noteSource, IngestionThread ingestionThread) {
 		this.noteSource = noteSource;
-		this.renderThread = renderThread;
+		this.ingestionThread = ingestionThread;
 	}
 
 	@Override
@@ -47,7 +48,7 @@ class MarkdownRenderer implements NoteRenderer {
 		if (renderedNote != null) return renderedNote;
 
 		// First process the YAML Front Matter
-		YAMLFrontMatterProcessor yfmProcessor = new YAMLFrontMatterProcessor(noteSource, renderThread);
+		YAMLFrontMatterProcessor yfmProcessor = new YAMLFrontMatterProcessor(noteSource, ingestionThread);
 		// This will remove the YFM from the note source and parse it into a NoteConfig instance
 		this.config = yfmProcessor.getParsedConfig();
 		// Re-assigning YFM-stripped note source

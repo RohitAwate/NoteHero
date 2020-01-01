@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Rohit Awate.
+ * Copyright 2020 Rohit Awate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.ingestion.renderer;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import io.github.rohitawate.notehero.ingestion.IngestionController;
+import io.github.rohitawate.notehero.ingestion.IngestionThread;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,13 +32,12 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class YAMLFrontMatterProcessorTest {
-
-	private RenderController controller = new RenderController();
+	private IngestionController controller = new IngestionController();
 
 	@Test
 	void positive() throws IOException, URISyntaxException {
 		YFMTestCase positive = loadTest("Positive.xml");
-		YAMLFrontMatterProcessor positiveProc = new YAMLFrontMatterProcessor(positive.full, new RenderThread(positive.filePath, controller));
+		YAMLFrontMatterProcessor positiveProc = new YAMLFrontMatterProcessor(positive.full, new IngestionThread(controller, positive.filePath));
 
 		assertEquals(positiveProc.getConfigString(), positive.expectedYFM);
 		assertEquals(positiveProc.getStrippedNote(), positive.expectedNote);
@@ -46,7 +47,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void leadingWhitespace() throws IOException, URISyntaxException {
 		YFMTestCase leadingWhitespace = loadTest("LeadingWhitespace.xml");
-		YAMLFrontMatterProcessor leadingWhitespaceProc = new YAMLFrontMatterProcessor(leadingWhitespace.full, new RenderThread(leadingWhitespace.filePath, controller));
+		YAMLFrontMatterProcessor leadingWhitespaceProc = new YAMLFrontMatterProcessor(leadingWhitespace.full, new IngestionThread(controller, leadingWhitespace.filePath));
 
 		assertEquals(leadingWhitespaceProc.getConfigString(), leadingWhitespace.expectedYFM);
 		assertEquals(leadingWhitespaceProc.getStrippedNote(), leadingWhitespace.expectedNote);
@@ -56,7 +57,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void emptyFrontMatter() throws IOException, URISyntaxException {
 		YFMTestCase emptyFrontMatter = loadTest("EmptyFrontMatter.xml");
-		YAMLFrontMatterProcessor emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, new RenderThread(emptyFrontMatter.filePath, controller));
+		YAMLFrontMatterProcessor emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, new IngestionThread(controller, emptyFrontMatter.filePath));
 
 		assertEquals(emptyFrontMatterProc.getConfigString(), emptyFrontMatter.expectedYFM);
 		assertEquals(emptyFrontMatterProc.getStrippedNote(), emptyFrontMatter.expectedNote);
@@ -66,7 +67,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noFrontMatter() throws IOException, URISyntaxException {
 		YFMTestCase noFrontMatter = loadTest("NoFrontMatter.xml");
-		YAMLFrontMatterProcessor noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, new RenderThread(noFrontMatter.filePath, controller));
+		YAMLFrontMatterProcessor noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, new IngestionThread(controller, noFrontMatter.filePath));
 
 		assertEquals(noFrontMatterProc.getConfigString(), noFrontMatter.expectedYFM);
 		assertEquals(noFrontMatterProc.getStrippedNote(), noFrontMatter.expectedNote);
@@ -76,7 +77,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noOpenDelim() throws IOException, URISyntaxException {
 		YFMTestCase noOpenDelim = loadTest("NoOpenDelim.xml");
-		YAMLFrontMatterProcessor noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, new RenderThread(noOpenDelim.filePath, controller));
+		YAMLFrontMatterProcessor noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, new IngestionThread(controller, noOpenDelim.filePath));
 
 		assertEquals(noOpenDelimProc.getConfigString(), noOpenDelim.expectedYFM);
 		assertEquals(noOpenDelimProc.getStrippedNote(), noOpenDelim.expectedNote);
@@ -86,7 +87,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noCloseDelim() throws IOException, URISyntaxException {
 		YFMTestCase noCloseDelim = loadTest("NoCloseDelim.xml");
-		YAMLFrontMatterProcessor noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, new RenderThread(noCloseDelim.filePath, controller));
+		YAMLFrontMatterProcessor noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, new IngestionThread(controller, noCloseDelim.filePath));
 
 		assertEquals(noCloseDelimProc.getConfigString(), noCloseDelim.expectedYFM);
 		assertEquals(noCloseDelimProc.getStrippedNote(), noCloseDelim.expectedNote);
@@ -96,7 +97,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void emptySource() throws IOException, URISyntaxException {
 		YFMTestCase emptySource = loadTest("EmptySource.xml");
-		YAMLFrontMatterProcessor emptySourceProc = new YAMLFrontMatterProcessor(emptySource.full, new RenderThread(emptySource.filePath, controller));
+		YAMLFrontMatterProcessor emptySourceProc = new YAMLFrontMatterProcessor(emptySource.full, new IngestionThread(controller, emptySource.filePath));
 
 		assertEquals(emptySourceProc.getConfigString(), emptySource.expectedYFM);
 		assertEquals(emptySourceProc.getStrippedNote(), emptySource.expectedNote);
@@ -106,7 +107,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void singleDelim() throws IOException, URISyntaxException {
 		YFMTestCase singleDelim = loadTest("SingleDelim.xml");
-		YAMLFrontMatterProcessor singleDelimProc = new YAMLFrontMatterProcessor(singleDelim.full, new RenderThread(singleDelim.filePath, controller));
+		YAMLFrontMatterProcessor singleDelimProc = new YAMLFrontMatterProcessor(singleDelim.full, new IngestionThread(controller, singleDelim.filePath));
 
 		assertEquals(singleDelimProc.getConfigString(), singleDelim.expectedYFM);
 		assertEquals(singleDelimProc.getStrippedNote(), singleDelim.expectedNote);
@@ -116,7 +117,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void bothDelim() throws IOException, URISyntaxException {
 		YFMTestCase bothDelim = loadTest("BothDelim.xml");
-		YAMLFrontMatterProcessor bothDelimProc = new YAMLFrontMatterProcessor(bothDelim.full, new RenderThread(bothDelim.filePath, controller));
+		YAMLFrontMatterProcessor bothDelimProc = new YAMLFrontMatterProcessor(bothDelim.full, new IngestionThread(controller, bothDelim.filePath));
 
 		assertEquals(bothDelimProc.getConfigString(), bothDelim.expectedYFM);
 		assertEquals(bothDelimProc.getStrippedNote(), bothDelim.expectedNote);
@@ -154,4 +155,5 @@ class YAMLFrontMatterProcessorTest {
 		@JacksonXmlProperty
 		private NoteConfig expectedConfig;
 	}
+
 }

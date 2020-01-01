@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.ingestion.renderer;
 
+import io.github.rohitawate.notehero.ingestion.IngestionThread;
 import io.github.rohitawate.notehero.text.CaseFormat;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
@@ -38,11 +39,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 Used to skip subsequent calls.
 	*/
 	private boolean noFrontMatter;
-	private RenderThread renderThread;
+	private IngestionThread ingestionThread;
 
-	public YAMLFrontMatterProcessor(String noteSource, RenderThread renderThread) {
+	public YAMLFrontMatterProcessor(String noteSource, IngestionThread ingestionThread) {
 		this.noteSource = noteSource;
-		this.renderThread = renderThread;
+		this.ingestionThread = ingestionThread;
 	}
 
 	/**
@@ -128,9 +129,9 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		Map<String, Object> noteHero = (Map<String, Object>) yamlMap.get("notehero");
 
 		String title = String.valueOf(
-				noteHero.getOrDefault("title", generateDefaultTitle(renderThread.filePath)));
+				noteHero.getOrDefault("title", generateDefaultTitle(ingestionThread.getFilePath())));
 		String slug = String.valueOf(
-				noteHero.getOrDefault("slug", generateDefaultSlug(renderThread.filePath)));
+				noteHero.getOrDefault("slug", generateDefaultSlug(ingestionThread.getFilePath())));
 
 		boolean sudo = true;    // defaults to true
 		if (noteHero.containsKey("sudo")) {
@@ -175,7 +176,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		// The source MUST start with the opening delimiter
 		if (!noteSource.startsWith(yfmDelimiter)) {
-			renderThread.logWarning("YAML Front Matter not found at start of file.");
+			ingestionThread.logWarning("YAML Front Matter not found at start of file.");
 			noFrontMatter = true;
 			return;
 		}
@@ -186,7 +187,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		 length of the opening delimiter (3) and the newline (1).
 		*/
 		if (noteSource.length() == 4) {
-			renderThread.logWarning("YAML Front Matter not terminated.");
+			ingestionThread.logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
@@ -197,7 +198,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		*/
 		int end = noteSource.indexOf(yfmDelimiter, 4);
 		if (end == -1) {
-			renderThread.logWarning("YAML Front Matter not terminated.");
+			ingestionThread.logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
@@ -243,7 +244,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 */
 	private String[] generateDefaultCategories() {
 		// Obtain the file's path
-		String filePath = renderThread.filePath;
+		String filePath = ingestionThread.getFilePath();
 
 		/*
 		 NoteHero expects all note sources to reside within
@@ -321,7 +322,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 * @return NoteConfig instance initialized with default values
 	 */
 	private NoteConfig generateDefaultConfig() {
-		return new NoteConfig(generateDefaultTitle(renderThread.filePath), generateDefaultCategories(),
-				generateDefaultSlug(renderThread.filePath), true);
+		return new NoteConfig(generateDefaultTitle(ingestionThread.getFilePath()), generateDefaultCategories(),
+				generateDefaultSlug(ingestionThread.getFilePath()), true);
 	}
 }

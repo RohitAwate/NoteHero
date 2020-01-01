@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.ingestion.renderer;
 
 /**
  * NoteRenderer defines the interface for renderers
  * that produce HTML source from the note's source format.
  */
-interface NoteRenderer {
+public interface NoteRenderer {
 	/**
 	 * Renders the note from the source format to HTML.
 	 * Any configuration data must be stripped and parsed before

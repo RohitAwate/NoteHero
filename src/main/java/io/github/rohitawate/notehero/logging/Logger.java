@@ -58,6 +58,17 @@ public class Logger {
 		}
 	}
 
+	/**
+	 * Uses a LogExporter to serialize and export the logs
+	 * to some target format and location.
+	 *
+	 * @param exporter The appropriate LogExporter implementation
+	 */
+	public void export(LogExporter exporter) {
+		exporter.serialize(logs);
+		exporter.export();
+	}
+
 	public Logger(Log.Level thresholdLevel) {
 		this.thresholdLevel = thresholdLevel;
 	}

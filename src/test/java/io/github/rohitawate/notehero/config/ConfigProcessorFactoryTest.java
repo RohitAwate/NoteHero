@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.config;
+package io.github.rohitawate.notehero.config;
 
 import org.junit.jupiter.api.Test;
 

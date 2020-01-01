@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.renderer;
 
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.gitlab.GitLabExtension;
@@ -23,9 +23,9 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import io.github.rohitawate.notehero.config.ConfigProcessor;
+import io.github.rohitawate.notehero.config.ConfigProcessorFactory;
 import io.github.rohitawate.notehero.ingestion.IngestionThread;
-import io.github.rohitawate.notehero.ingestion.config.ConfigProcessor;
-import io.github.rohitawate.notehero.ingestion.config.ConfigProcessorFactory;
 import io.github.rohitawate.notehero.models.NoteConfig;
 
 import java.util.Arrays;

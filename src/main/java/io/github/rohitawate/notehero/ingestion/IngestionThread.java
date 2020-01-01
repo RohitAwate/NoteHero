@@ -16,9 +16,9 @@
 
 package io.github.rohitawate.notehero.ingestion;
 
-import io.github.rohitawate.notehero.ingestion.renderer.NoteRenderer;
-import io.github.rohitawate.notehero.ingestion.renderer.NoteRendererFactory;
 import io.github.rohitawate.notehero.logging.Logger;
+import io.github.rohitawate.notehero.renderer.NoteRenderer;
+import io.github.rohitawate.notehero.renderer.NoteRendererFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;

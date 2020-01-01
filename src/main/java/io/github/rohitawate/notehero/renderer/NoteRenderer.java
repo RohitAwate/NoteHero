@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.renderer;
 
 import io.github.rohitawate.notehero.models.NoteConfig;
 

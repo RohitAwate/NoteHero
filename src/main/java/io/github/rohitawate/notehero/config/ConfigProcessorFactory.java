@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.config;
 
 import io.github.rohitawate.notehero.ingestion.IngestionThread;
 
-import java.io.File;
-
-public class NoteRendererFactory {
-	public static NoteRenderer get(String filePath, String noteSource, IngestionThread ingestionThread) {
-		String fileName = new File(filePath).getName();
-
-		if (fileName.endsWith(".md") || fileName.endsWith(".markdown") || fileName.endsWith(".mdown") || fileName.endsWith(".mkd")) {
-			return new MarkdownRenderer(noteSource, ingestionThread);
-		} else {
-			return null;
+public class ConfigProcessorFactory {
+	public static ConfigProcessor get(String type, String noteSource, IngestionThread ingestionThread) {
+		switch (type) {
+			case "yaml":
+			case "yml":
+				return new YAMLFrontMatterProcessor(noteSource, ingestionThread);
+			default:
+				return null;
 		}
 	}
 }

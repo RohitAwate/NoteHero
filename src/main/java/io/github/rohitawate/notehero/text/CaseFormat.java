@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Rohit Awate.
+ * Copyright 2020 Rohit Awate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,9 +56,9 @@ public enum CaseFormat {
 		CaseFormat sourceCaseFormat = identifyCaseFormat(source);
 
 		/*
-			 If the source formats are same, we return the same string
-			 The only exception is Title case which may alter the capitalization
-			 of some words.
+		 If the source formats are same, we return the same string
+		 The only exception is Title case which may alter the capitalization
+		 of some words.
 		*/
 		if (sourceCaseFormat == targetCaseFormat && targetCaseFormat != TITLE)
 			return source;
@@ -172,15 +172,18 @@ public enum CaseFormat {
 	 * @return The case format of the string
 	 */
 	public static CaseFormat identifyCaseFormat(String source) {
+		// assumption
+		if (source.isEmpty()) return LOWER_CAMEL;
+
 		source = source.trim();
 
 		if (source.matches("([^\\s]+\\s+)+[^\\s]+")) {
 			/*
-				 This can mean that other cases exist in the string as well.
-				 For example, "Making a cam_shaft" contains both spaces as
-				 well as lower snake case.
+			 This can mean that other cases exist in the string as well.
+			 For example, "Making a cam_shaft" contains both spaces as
+			 well as lower snake case.
 
-				 However, we let spaces take precedence over others.
+			 However, we let spaces take precedence over others.
 			*/
 
 			return CaseFormat.TITLE;
@@ -224,8 +227,10 @@ public enum CaseFormat {
 	 * @return String array of tokens
 	 */
 	public static String[] tokenize(String source, CaseFormat sourceCaseFormat) {
-		// All but CamelCase since they have clear delimiters
-		// which can be used to tokenize the string.
+		/*
+		 All but CamelCase since they have clear delimiters
+		 which can be used to tokenize the string.
+		*/
 		if (sourceCaseFormat != LOWER_CAMEL && sourceCaseFormat != UPPER_CAMEL) {
 			String delimRegex;
 
@@ -251,10 +256,10 @@ public enum CaseFormat {
 			ArrayList<String> tokens = new ArrayList<>(Arrays.asList(source.split(delimRegex)));
 
 			/*
-				Leading delimiter(s) may lead to empty tokens being generated.
-				For example: ___hello__world__ would generate "", "hello" and "world".
+			Leading delimiter(s) may lead to empty tokens being generated.
+			For example: ___hello__world__ would generate "", "hello" and "world".
 
-				Thus, we check if the first first token is empty.
+			Thus, we check if the first first token is empty.
 			 */
 			if (tokens.get(0).isEmpty()) {
 				tokens.remove(0);
@@ -279,13 +284,13 @@ public enum CaseFormat {
 	 */
 	private static String[] tokenizeCamelCase(String source) {
 		/*
-			 This regex powered implementation is probably not the fastest
-			 or most efficient. What it is, is readable and concise.
-			 This is inspired by the StackOverflow answer here:
-			 https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-sentence-case-text
+		 This regex powered implementation is probably not the fastest
+		 or most efficient. What it is, is readable and concise.
+		 This is inspired by the StackOverflow answer here:
+		 https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-sentence-case-text
 
-			 For the previous parser-style implementation, check this commit:
-			 https://github.com/RohitAwate/NoteHero/commit/aec96d38a9cbfbfdb4cc018393e52fb0ae63d900
+		 For the previous parser-style implementation, check this commit:
+		 https://github.com/RohitAwate/NoteHero/commit/aec96d38a9cbfbfdb4cc018393e52fb0ae63d900
 		*/
 
 		source = source

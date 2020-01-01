@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  ~ Copyright 2019 Rohit Awate.
+  ~ Copyright 2020 Rohit Awate.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,49 +16,52 @@
   -->
 
 <YFMTestCase>
-	<full>
+    <full>
 
 
-		---
-		notehero:
-		sudo: false
-		---
+        ---
+        notehero:
+        sudo: false
+        categories: 'CS> FinalYear >HPC'
+        ---
 
-		### HPC: Unit 5
-		# Parallel Algorithms: Sorting and Graph
+        ### HPC: Unit 5
+        # Parallel Algorithms: Sorting and Graph
 
-		---
+        ---
 
-		### Syllabus
-		Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
-		Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
-		Parallel Depth-First Search, Parallel Best-First Search
-		---
-	</full>
-	<expectedYFM>
-		notehero:
-		sudo: false
-	</expectedYFM>
-	<expectedNote>
-		### HPC: Unit 5
-		# Parallel Algorithms: Sorting and Graph
+        ### Syllabus
+        Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
+        Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
+        Parallel Depth-First Search, Parallel Best-First Search
+        ---
+    </full>
+    <expectedYFM>
+        notehero:
+        sudo: false
+        categories: 'CS> FinalYear >HPC'
+    </expectedYFM>
+    <expectedNote>
+        ### HPC: Unit 5
+        # Parallel Algorithms: Sorting and Graph
 
-		---
+        ---
 
-		### Syllabus
-		Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
-		Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
-		Parallel Depth-First Search, Parallel Best-First Search
-		---
-	</expectedNote>
-	<filePath>/home/notehero/notes/CS/Deep Learning/CNN.md</filePath>
-	<expectedConfig>
-		<title>CNN</title>
-		<sudo>false</sudo>
-		<slug>cnn</slug>
-		<categories>
-			<categories>CS</categories>
-			<categories>Deep Learning</categories>
-		</categories>
-	</expectedConfig>
+        ### Syllabus
+        Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
+        Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
+        Parallel Depth-First Search, Parallel Best-First Search
+        ---
+    </expectedNote>
+    <filePath>/home/notehero/notes/CS/Deep Learning/CNN.md</filePath>
+    <expectedConfig>
+        <title>CNN</title>
+        <sudo>false</sudo>
+        <slug>cnn</slug>
+        <categories>
+            <categories>CS</categories>
+            <categories>Final Year</categories>
+            <categories>HPC</categories>
+        </categories>
+    </expectedConfig>
 </YFMTestCase>

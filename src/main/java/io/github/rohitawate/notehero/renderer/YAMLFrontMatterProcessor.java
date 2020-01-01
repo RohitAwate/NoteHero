@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Rohit Awate.
+ * Copyright 2020 Rohit Awate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.github.rohitawate.notehero.renderer;
 
+import io.github.rohitawate.notehero.text.CaseFormat;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
@@ -32,8 +33,10 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	private String yamlSource = "";
 	private NoteConfig config;
 
-	// Set to true if stripConfig finds no YAML Front Matter.
-	// Used to skip subsequent calls.
+	/*
+	 Set to true if stripConfig finds no YAML Front Matter.
+	 Used to skip subsequent calls.
+	*/
 	private boolean noFrontMatter;
 	private RenderThread renderThread;
 
@@ -49,8 +52,10 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 */
 	@Override
 	public void stripConfig() {
-		// Check if stripConfig found no YAML Front Matter in a previous call.
-		// If true, we skip further calls here.
+		/*
+		 Check if stripConfig found no YAML Front Matter in a previous call.
+		 If true, we skip further calls here.
+		*/
 		if (noFrontMatter) {
 			return;
 		}
@@ -67,17 +72,21 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			return;
 		}
 
-		// The delimiters must be on separate lines.
-		// Thus, we ensure that the noteSource is more than the combined
-		// length of the opening delimiter (3) and the newline (1).
+		/*
+		 The delimiters must be on separate lines.
+		 Thus, we ensure that the noteSource is more than the combined
+		 length of the opening delimiter (3) and the newline (1).
+		*/
 		if (noteSource.length() == 4) {
 			renderThread.logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
 
-		// Searching for closing delimiter from index 4 (3 hyphens + \n)
-		// to skip the opening one
+		/*
+		 Searching for closing delimiter from index 4 (3 hyphens + \n)
+		 to skip the opening one
+		*/
 		int end = noteSource.indexOf(yfmDelimiter, 4);
 		if (end == -1) {
 			renderThread.logWarning("YAML Front Matter not terminated.");
@@ -85,15 +94,19 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			return;
 		}
 
-		// We only store the actual YAML thus skipping the
-		// opening delimiter (4 = 3 hyphens + newline)
+		/*
+		 We only store the actual YAML thus skipping the
+		 opening delimiter (4 = 3 hyphens + newline)
+		*/
 		yamlSource = noteSource.substring(4, end);
 		yamlSource = yamlSource.trim();
 
-		// We store the actual note stripped of the YAML Front Matter.
-		// It begins after the closing delimiter (3 hyphens).
-		// We trim to get rid of any whitespace between the Front Matter
-		// and the actual content.
+		/*
+		 We store the actual note stripped of the YAML Front Matter.
+		 It begins after the closing delimiter (3 hyphens).
+		 We trim to get rid of any whitespace between the Front Matter
+		 and the actual content.
+		*/
 		noteSource = noteSource.substring(end + 3);
 		noteSource = noteSource.trim();
 	}
@@ -113,27 +126,29 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 			return config;
 		}
 
-		// Check if yamlSource is empty (i.e. possibly not yet stripped) and
-		// if noFrontMatter is false (confirming the possibility). In that case,
-		// stripConfig is called so that we have a value to parse.
+		/*
+		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
+		 if noFrontMatter is false (confirming the possibility). In that case,
+		 stripConfig is called so that we have a value to parse.
+		*/
 		if (yamlSource.isEmpty() && !noFrontMatter) {
 			stripConfig();
 		}
 
         /*
-             We need to return a NoteConfig instance initialized with default values
-             in the following cases:
-             - yamlSource is still empty
-             - yamlSource contains no "notehero" object
-             - "notehero" object contains no values for optional attributes
+		 We need to return a NoteConfig instance initialized with default values
+		 in the following cases:
+		 - yamlSource is still empty
+		 - yamlSource contains no "notehero" object
+		 - "notehero" object contains no values for optional attributes
 
-             NoteHero expects 4 attributes in the aforementioned object:
-              1. title (required)
-              2. sudo (optional, defaults to true)
-              3. slug (optional, refer DESIGN.md for default values)
-              4. categories (optional, refer DESIGN.md for default values)
+		 NoteHero expects 4 attributes in the aforementioned object:
+		  1. title (required)
+		  2. sudo (optional, defaults to true)
+		  3. slug (optional, refer DESIGN.md for default values)
+		  4. categories (optional, refer DESIGN.md for default values)
 
-             For details about how and where these attributes are used, refer DESIGN.md.
+		 For details about how and where these attributes are used, refer DESIGN.md.
          */
 
 		if (yamlSource.isEmpty()) return generateDefaultConfig();
@@ -142,19 +157,26 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		Map<String, Object> yamlMap = yaml.load(yamlSource);
 		if (!yamlMap.containsKey("notehero")) return generateDefaultConfig();
 
-		Map<String, String> noteHero = (Map<String, String>) yamlMap.get("notehero");
+		Map<String, Object> noteHero = (Map<String, Object>) yamlMap.get("notehero");
 
-		String title = noteHero.getOrDefault("title", generateDefaultTitle(renderThread.filePath));
-		String slug = noteHero.getOrDefault("slug", generateDefaultSlug(renderThread.filePath));
+		String title = String.valueOf(
+				noteHero.getOrDefault("title", generateDefaultTitle(renderThread.filePath)));
+		String slug = String.valueOf(
+				noteHero.getOrDefault("slug", generateDefaultSlug(renderThread.filePath)));
 
 		boolean sudo = true;    // defaults to true
 		if (noteHero.containsKey("sudo")) {
-			sudo = Boolean.getBoolean(noteHero.get("sudo"));
+			sudo = Boolean.parseBoolean(String.valueOf(noteHero.get("sudo")));
 		}
 
 		String[] categories;
 		if (noteHero.containsKey("categories")) {
-			categories = noteHero.get("categories").split("\\s>\\s");
+			categories = noteHero.get("categories").toString().split("\\s?>\\s?");
+
+			// convert each category to title case
+			for (int i = 0; i < categories.length; i++) {
+				categories[i] = CaseFormat.convertTo(categories[i], CaseFormat.TITLE);
+			}
 		} else {
 			categories = generateDefaultCategories();
 		}
@@ -171,81 +193,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// For files with no names
 		if (fileName.isEmpty()) return "Untitled";
 
-		// identify fileName type
-		// - fileName with spaces
-		// - snake_case
-		// - CamelCase
-		//
-		// Separate into individual words and then concatenate by adding spaces.
-
-		StringBuilder titleBuilder = new StringBuilder();
-		if (fileName.contains(" ")) {
-			// example: 'Hello world' becomes 'Hello World'
-			String[] tokens = fileName.split("\\s+");
-
-			for (int i = 0; i < tokens.length; i++) {
-				String token = tokens[i];
-				token = token.toLowerCase();
-				titleBuilder.append(Character.toUpperCase(token.charAt(0))).append(token.substring(1));
-
-
-				// don't add a space for last token
-				if (i != tokens.length - 1) {
-					titleBuilder.append(" ");
-				}
-			}
-		} else if (fileName.contains("_")) {
-			// example: 'hello_Word' becomes 'Hello World'
-			String[] tokens = fileName.split("_");
-
-			for (int i = 0; i < tokens.length; i++) {
-				String token = tokens[i];
-				token = token.toLowerCase();
-				titleBuilder.append(Character.toUpperCase(token.charAt(0))).append(token.substring(1));
-
-				// don't add a space for last token
-				if (i != tokens.length - 1) {
-					titleBuilder.append(" ");
-				}
-			}
-		} else {
-			// Handle CamelCase
-			// example: 'HelloWorld' becomes 'Hello World'
-			char c;
-			for (int i = 0; i < fileName.length(); i++) {
-				c = fileName.charAt(i);
-				/*
-					First, we obviously check if the current character is in uppercase so that we can add a
-					space before it.
-
-					Next, we check if c is not the first character in the string. If it is, we do not add a
-					space since it would result in "HelloWorld" being converted to " Hello World" i.e. a
-					leading whitespace.
-
-					Lastly, we check if the string has any more characters. If it does, we check if the next character
-					is lowercase, so that we don't add a whitespace between two uppercase characters. This ensures that
-					acronyms such as "DNA" don't get converted to "D N A".
-				 */
-				if (Character.isUpperCase(c) && i != 0 &&
-						(i + 1) < fileName.length() && Character.isLowerCase(fileName.charAt(i + 1))) {
-					titleBuilder.append(" ");
-				}
-
-				titleBuilder.append(c);
-			}
-
-			// Check if the resultant string had just one word
-			// and that it starts with an alphabet.
-			// For example, "hello" remains "hello" by the previous logic.
-			// Thus, we convert the first character to uppercase.
-			String result = titleBuilder.toString();
-			if (!result.contains(" ")) {
-				result = Character.toUpperCase(result.charAt(0)) + result.substring(1);
-				return result;
-			}
-		}
-
-		return titleBuilder.toString();
+		return CaseFormat.convertTo(fileName, CaseFormat.TITLE);
 	}
 
 	/**
@@ -264,21 +212,27 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// Obtain the file's path
 		String filePath = renderThread.filePath;
 
-		// NoteHero expects all note sources to reside within
-		// notes/ directory. Thus, all paths would contain it.
-		// We generate categories based on the directory hierarchy
-		// within the notes/ directory. Thus, we take the substring
-		// starting after notes/.
+		/*
+		 NoteHero expects all note sources to reside within
+		 notes/ directory. Thus, all paths would contain it.
+		 We generate categories based on the directory hierarchy
+		 within the notes/ directory. Thus, we take the substring
+		 starting after notes/.
+		*/
 		filePath = filePath.substring(filePath.indexOf("notes/") + 6);
 
-		// If the note resides within notes/, then filePath should only
-		// contain the its filename and thus leave no room for us to
-		// deduce any categories. We return an empty string array.
+		/*
+		 If the note resides within notes/, then filePath should only
+		 contain the its filename and thus leave no room for us to
+		 deduce any categories. We return an empty string array.
+		*/
 		if (filePath.equals(getFileName(filePath))) return new String[]{};
 
-		// Else, note resides within some directory hierarchy within notes/.
-		// In this case, we extract the directory names to build up
-		// our string array of categories.
+		/*
+		 Else, note resides within some directory hierarchy within notes/.
+		 In this case, we extract the directory names to build up
+		 our string array of categories.
+		*/
 		File fd = new File(filePath);
 		Stack<String> categoryStack = new Stack<>();
 
@@ -289,7 +243,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 			// Push to stack since our category hierarchy
 			// is the reverse of the directories'
-			categoryStack.push(category);
+			categoryStack.push(CaseFormat.convertTo(category, CaseFormat.TITLE));
 
 			fd = fd.getParentFile();
 		}
@@ -305,55 +259,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 	private String generateDefaultSlug(String filePath) {
 		String fileName = getFileName(filePath);
-
-		// identify fileName type
-		// - fileName with spaces
-		// - snake_case
-		// - CamelCase
-		//
-		// Separate into individual words, convert them to lowercase and
-		// then concatenate by adding hyphens.
-
-		StringBuilder slugBuilder = new StringBuilder();
-		if (fileName.contains(" ")) {
-			// example: 'Hello world' becomes 'hello-world' thus preserving the case
-			// of each word
-			String[] tokens = fileName.split("\\s+");
-
-			for (int i = 0; i < tokens.length; i++) {
-				slugBuilder.append(tokens[i].toLowerCase());
-
-				// don't add a hyphen for last token
-				if (i != tokens.length - 1) {
-					slugBuilder.append("-");
-				}
-			}
-		} else if (fileName.contains("_")) {
-			// example: 'hello_Word' becomes 'hello-world'
-			String[] tokens = fileName.split("_");
-
-			for (int i = 0; i < tokens.length; i++) {
-				slugBuilder.append(tokens[i].toLowerCase());
-
-				// don't add a hyphen for last token
-				if (i != tokens.length - 1) {
-					slugBuilder.append("-");
-				}
-			}
-		} else {
-			// example: 'HelloWorld' becomes 'hello-world'
-			char c;
-			for (int i = 0; i < fileName.length(); i++) {
-				c = fileName.charAt(i);
-				if (i != 0 && Character.isUpperCase(c)) {
-					slugBuilder.append("-");
-				}
-
-				slugBuilder.append(Character.toLowerCase(c));
-			}
-		}
-
-		return slugBuilder.toString();
+		return CaseFormat.convertTo(fileName, CaseFormat.LOWER_HYPHENATED);
 	}
 
 	@NotNull
@@ -365,9 +271,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		// remove extension
 		fileName = fileName.split("\\.")[0];
 
-		// remove all characters except upper/lower case alphabet,
-		// numbers, underscores and spaces
-		fileName = fileName.replaceAll("[^a-zA-Z0-9_\\s]+", "");
+		/*
+		 Remove all characters except upper/lower case alphabet,
+		 numbers, underscores, hyphens and spaces
+		*/
+		fileName = fileName.replaceAll("[^a-zA-Z0-9_\\-\\s]+", "");
 
 		return fileName;
 	}
@@ -387,9 +295,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 */
 	@Override
 	public String getStrippedNote() {
-		// Check if yamlSource is empty (i.e. possibly not yet stripped) and
-		// if noFrontMatter is false (confirming the possibility). In that case,
-		// stripConfig is called to produce the return value.
+		/*
+		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
+		 if noFrontMatter is false (confirming the possibility). In that case,
+		 stripConfig is called to produce the return value.
+		*/
 		if (yamlSource.isEmpty() && !noFrontMatter) {
 			stripConfig();
 		}
@@ -402,9 +312,11 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 */
 	@Override
 	public String getConfigString() {
-		// Check if yamlSource is empty (i.e. possibly not yet stripped) and
-		// if noFrontMatter is false (confirming the possibility). In that case,
-		// stripConfig is called to produce the return value.
+		/*
+		 Check if yamlSource is empty (i.e. possibly not yet stripped) and
+		 if noFrontMatter is false (confirming the possibility). In that case,
+		 stripConfig is called to produce the return value.
+		*/
 		if (yamlSource.isEmpty() && !noFrontMatter) {
 			stripConfig();
 		}

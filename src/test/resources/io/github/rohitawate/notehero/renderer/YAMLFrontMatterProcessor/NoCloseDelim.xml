@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  ~ Copyright 2019 Rohit Awate.
+  ~ Copyright 2020 Rohit Awate.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,44 +16,44 @@
   -->
 
 <YFMTestCase>
-	<full>
-		---
-		notehero:
-		categories: "CS > HPC"
+    <full>
+        ---
+        notehero:
+        categories: "CS > HPC"
 
-		### HPC: Unit 5
-		# Parallel Algorithms: Sorting and Graph
+        ### HPC: Unit 5
+        # Parallel Algorithms: Sorting and Graph
 
-		---
+        ---
 
-		### Syllabus
-		Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
-		Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
-		Parallel Depth-First Search, Parallel Best-First Search
-		---
-	</full>
-	<expectedYFM>
-		notehero:
-		categories: "CS > HPC"
+        ### Syllabus
+        Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
+        Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
+        Parallel Depth-First Search, Parallel Best-First Search
+        ---
+    </full>
+    <expectedYFM>
+        notehero:
+        categories: "CS > HPC"
 
-		### HPC: Unit 5
-		# Parallel Algorithms: Sorting and Graph
-	</expectedYFM>
-	<expectedNote>
-		### Syllabus
-		Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
-		Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
-		Parallel Depth-First Search, Parallel Best-First Search
-		---
-	</expectedNote>
-	<filePath>/home/notehero/notes/CS/HPC/parallel algorithms.md</filePath>
-	<expectedConfig>
-		<title>Parallel Algorithms</title>
-		<sudo>true</sudo>
-		<slug>parallel-algorithms</slug>
-		<categories>
-			<categories>CS</categories>
-			<categories>HPC</categories>
-		</categories>
-	</expectedConfig>
+        ### HPC: Unit 5
+        # Parallel Algorithms: Sorting and Graph
+    </expectedYFM>
+    <expectedNote>
+        ### Syllabus
+        Issues in Sorting on Parallel Computers, Bubble Sort and its Variants,
+        Parallelizing Quick sort, All-Pairs Shortest Paths, Algorithm for sparse graph,
+        Parallel Depth-First Search, Parallel Best-First Search
+        ---
+    </expectedNote>
+    <filePath>/home/notehero/notes/CS/HPC/parallel algorithms.md</filePath>
+    <expectedConfig>
+        <title>Parallel Algorithms</title>
+        <sudo>true</sudo>
+        <slug>parallel-algorithms</slug>
+        <categories>
+            <categories>CS</categories>
+            <categories>HPC</categories>
+        </categories>
+    </expectedConfig>
 </YFMTestCase>

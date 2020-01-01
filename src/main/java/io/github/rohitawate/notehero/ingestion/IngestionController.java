@@ -16,21 +16,9 @@
 
 package io.github.rohitawate.notehero.ingestion;
 
+import io.github.rohitawate.notehero.logging.Log;
+import io.github.rohitawate.notehero.logging.Logger;
+
 public class IngestionController {
-	private String buildLog = "";
-
-	synchronized void appendLog(final String msg, final String color) {
-		buildLog += color + msg + LogColors.RESET + "\n";
-	}
-
-	public String getBuildLog() {
-		return this.buildLog;
-	}
-
-	interface LogColors {
-		String RESET = "\u001B[0m";
-		String RED = "\u001B[31m";
-		String YELLOW = "\u001B[33m";
-		String BLUE = "\u001B[34m";
-	}
+	final Logger logger = new Logger(Log.Level.WARNING);
 }

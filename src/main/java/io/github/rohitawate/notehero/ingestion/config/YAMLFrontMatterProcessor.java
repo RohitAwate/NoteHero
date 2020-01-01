@@ -177,7 +177,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		// The source MUST start with the opening delimiter
 		if (!noteSource.startsWith(yfmDelimiter)) {
-			ingestionThread.logWarning("YAML Front Matter not found at start of file.");
+			ingestionThread.getLogger().logWarning("YAML Front Matter not found at start of file.");
 			noFrontMatter = true;
 			return;
 		}
@@ -188,7 +188,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		 length of the opening delimiter (3) and the newline (1).
 		*/
 		if (noteSource.length() == 4) {
-			ingestionThread.logWarning("YAML Front Matter not terminated.");
+			ingestionThread.getLogger().logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
@@ -199,7 +199,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		*/
 		int end = noteSource.indexOf(yfmDelimiter, 4);
 		if (end == -1) {
-			ingestionThread.logWarning("YAML Front Matter not terminated.");
+			ingestionThread.getLogger().logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}

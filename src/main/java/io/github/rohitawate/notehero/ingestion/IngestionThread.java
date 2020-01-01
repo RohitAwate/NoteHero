@@ -18,6 +18,7 @@ package io.github.rohitawate.notehero.ingestion;
 
 import io.github.rohitawate.notehero.ingestion.renderer.NoteRenderer;
 import io.github.rohitawate.notehero.ingestion.renderer.NoteRendererFactory;
+import io.github.rohitawate.notehero.logging.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,13 +26,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class IngestionThread implements Runnable {
-	private final IngestionController controller;
 	private final String filePath;
 	private String renderedNote = "";
 	private boolean successful;
+	private final Logger logger;
 
 	public IngestionThread(IngestionController controller, String filePath) {
-		this.controller = controller;
+		this.logger = controller.logger;
 		this.filePath = filePath;
 	}
 
@@ -42,7 +43,7 @@ public class IngestionThread implements Runnable {
 			NoteRenderer renderer = NoteRendererFactory.get(filePath, noteSource, this);
 
 			if (renderer == null) {
-				logError("Unknown source format: " + filePath);
+				logger.logError("Unknown source format: " + filePath);
 				successful = false;
 				return;
 			}
@@ -50,7 +51,7 @@ public class IngestionThread implements Runnable {
 			renderedNote = renderer.render();
 			successful = true;
 		} catch (IOException e) {
-			logError("Could not read note: " + getFilePath());
+			logger.logError("Could not read note: " + getFilePath());
 			successful = false;
 		}
 	}
@@ -64,23 +65,15 @@ public class IngestionThread implements Runnable {
 		return renderedNote;
 	}
 
-	public void logInfo(String msg) {
-		controller.appendLog(msg, IngestionController.LogColors.BLUE);
-	}
-
-	public void logWarning(String msg) {
-		controller.appendLog(msg, IngestionController.LogColors.YELLOW);
-	}
-
-	public void logError(String msg) {
-		controller.appendLog(msg, IngestionController.LogColors.RED);
-	}
-
 	public String getFilePath() {
 		return filePath;
 	}
 
 	public boolean wasSuccessful() {
 		return successful;
+	}
+
+	public Logger getLogger() {
+		return logger;
 	}
 }

@@ -24,7 +24,7 @@ public class NoteRendererFactory {
 	public static NoteRenderer get(String filePath, String noteSource, IngestionThread ingestionThread) {
 		String fileName = new File(filePath).getName();
 
-		if (fileName.endsWith(".md")) {
+		if (fileName.endsWith(".md") || fileName.endsWith(".markdown") || fileName.endsWith(".mdown") || fileName.endsWith(".mkd")) {
 			return new MarkdownRenderer(noteSource, ingestionThread);
 		} else {
 			return null;

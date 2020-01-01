@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.ingestion.config;
 
 import io.github.rohitawate.notehero.ingestion.IngestionThread;
+import io.github.rohitawate.notehero.models.NoteConfig;
 import io.github.rohitawate.notehero.text.CaseFormat;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;

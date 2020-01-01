@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,17 +28,17 @@ import java.util.Objects;
  * Used to store the configuration data stored in notes
  * that may be used to affect the build process.
  */
-class NoteConfig {
+public class NoteConfig {
 	final String title;
 	final String[] categories;
 	final String slug;
 	final boolean sudo;
 
 	@JsonCreator
-	NoteConfig(@JsonProperty("title") String title,
-			   @JsonProperty("categories") @JsonSetter(nulls = Nulls.AS_EMPTY) String[] categories,
-			   @JsonProperty("slug") String slug,
-			   @JsonProperty("sudo") boolean sudo) {
+	public NoteConfig(@JsonProperty("title") String title,
+					  @JsonProperty("categories") @JsonSetter(nulls = Nulls.AS_EMPTY) String[] categories,
+					  @JsonProperty("slug") String slug,
+					  @JsonProperty("sudo") boolean sudo) {
 		this.title = title;
 		this.categories = categories;
 		this.slug = slug;

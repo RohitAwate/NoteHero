@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.ingestion.config;
+
+import io.github.rohitawate.notehero.models.NoteConfig;
 
 /**
  * Delegate to NoteRenderer for processing
  * any configuration data that might be part
  * of the note's source.
  */
-interface ConfigProcessor {
+public interface ConfigProcessor {
 	/**
 	 * The stripped configuration data is returned
 	 * here. If stripConfig() has not been called

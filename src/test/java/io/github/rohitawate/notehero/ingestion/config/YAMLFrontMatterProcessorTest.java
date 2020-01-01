@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.ingestion.renderer;
+package io.github.rohitawate.notehero.ingestion.config;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import io.github.rohitawate.notehero.ingestion.IngestionController;
 import io.github.rohitawate.notehero.ingestion.IngestionThread;
+import io.github.rohitawate.notehero.models.NoteConfig;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

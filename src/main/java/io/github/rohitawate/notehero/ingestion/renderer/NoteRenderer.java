@@ -16,6 +16,8 @@
 
 package io.github.rohitawate.notehero.ingestion.renderer;
 
+import io.github.rohitawate.notehero.models.NoteConfig;
+
 /**
  * NoteRenderer defines the interface for renderers
  * that produce HTML source from the note's source format.

@@ -24,6 +24,9 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import io.github.rohitawate.notehero.ingestion.IngestionThread;
+import io.github.rohitawate.notehero.ingestion.config.ConfigProcessor;
+import io.github.rohitawate.notehero.ingestion.config.ConfigProcessorFactory;
+import io.github.rohitawate.notehero.models.NoteConfig;
 
 import java.util.Arrays;
 
@@ -48,11 +51,16 @@ class MarkdownRenderer implements NoteRenderer {
 		if (renderedNote != null) return renderedNote;
 
 		// First process the YAML Front Matter
-		YAMLFrontMatterProcessor yfmProcessor = new YAMLFrontMatterProcessor(noteSource, ingestionThread);
+		ConfigProcessor configProcessor = ConfigProcessorFactory.get("yaml", noteSource, ingestionThread);
+		if (configProcessor == null) {
+			ingestionThread.logError("Could not produce ConfigProcessor for YAML Front Matter");
+			return "";
+		}
+
 		// This will remove the YFM from the note source and parse it into a NoteConfig instance
-		this.config = yfmProcessor.getParsedConfig();
+		this.config = configProcessor.getParsedConfig();
 		// Re-assigning YFM-stripped note source
-		this.noteSource = yfmProcessor.getStrippedNote();
+		this.noteSource = configProcessor.getStrippedNote();
 
 		// Set the options and extensions for flexmark's parser
 		MutableDataSet parserOptions = new MutableDataSet();

@@ -19,6 +19,30 @@ package io.github.rohitawate.notehero.ingestion;
 import io.github.rohitawate.notehero.logging.Log;
 import io.github.rohitawate.notehero.logging.Logger;
 
+import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class IngestionController {
 	final Logger logger = new Logger(Log.Level.WARNING);
+
+	private final ArrayList<String> candidateFiles;
+
+	public IngestionController(ArrayList<String> candidateFiles) {
+		this.candidateFiles = candidateFiles;
+	}
+
+	public void start() {
+		CountDownLatch latch = new CountDownLatch(candidateFiles.size());
+		ExecutorService executor = Executors.newCachedThreadPool();
+		candidateFiles.
+				forEach(candidate -> executor.execute(new IngestionThread(this, candidate, latch)));
+
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			logger.logError("Ingestion process was interrupted.");
+		}
+	}
 }

@@ -24,16 +24,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
 public class IngestionThread implements Runnable {
 	private final String filePath;
 	private String renderedNote = "";
 	private boolean successful;
 	private final Logger logger;
+	private final CountDownLatch latch;
 
-	public IngestionThread(IngestionController controller, String filePath) {
+	public IngestionThread(IngestionController controller, String filePath, CountDownLatch latch) {
 		this.logger = controller.logger;
 		this.filePath = filePath;
+		this.latch = latch;
 	}
 
 	@Override
@@ -53,6 +56,8 @@ public class IngestionThread implements Runnable {
 		} catch (IOException e) {
 			logger.logError("Could not read note: " + getFilePath());
 			successful = false;
+		} finally {
+			latch.countDown();
 		}
 	}
 

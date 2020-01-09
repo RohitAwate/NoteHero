@@ -46,7 +46,8 @@ public class IngestionController {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			logger.logError("Ingestion process was interrupted.");
+			executor.shutdownNow();
+			logger.logError("Ingestion failed due to interruption during rendering.");
 		}
 	}
 }

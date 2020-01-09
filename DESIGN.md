@@ -229,9 +229,59 @@ In case the performance of the above system is poor, we can get rid of the union
 
 ---
 
+### Disk Storage Schema
+- Storing the notes on the main server's disk would produce many problems:
+    - Monolithic architecture
+    - Large storage requirements
+    - Limited scalibility
+    - Poor server performance due to constant disk usage
+- Offloading the storage to a separate service (which can run on a separate physical server) solves all of the above problems.
+- Go was chosen as the language of choice for this due to its lightweight concurrency model which lends itself perfectly to a simple API server.
+- All rendered notes will be stored to the web server's disk in `$HOME/notehero/notes/`.
+- The directory structure within the above directory shall be as such:
+
+```
+notes/
+├── free
+│   └── nhusername
+│       └── gh
+│           └── repo1
+│               └── lastestcommithash
+│                   └── cat1
+│                       └── cat2
+│                           └── some-note
+├── premium
+│   └── nhusername2
+│       ├── bb
+│       └── gl
+│           ├── repo1
+│           │   ├── commithash1
+│           │   │   └── cat1
+│           │   │       └── cat2
+│           │   │           └── some-other-note
+│           │   └── commithash2
+│           │       └── cat1
+│           │           └── cat2
+│           │               └── some-other-note
+│           └── repo2
+│               └── commithash1
+│                   └── cat1
+│                       └── cat2
+│                           └── some-other-note
+└── ultimate
+
+```
+- Each NoteHero plan gets its own directory, which contains directories corresponding to each NoteHero username on that plan.
+- Each of these username directories contains directories corresponding to each of the supported Git service providers: `gh` for GitHub, `gl` for GitLab and `bb` for BitBucket.
+- The repositories from each of these providers are nested inside this directory.
+- Each of these repositories contains directories corresponding to their commit hash. Each of these in turn contains rendered notes from that Git commit nested as per their category hierarchy.
+- Further down the road, this monolithic storage architecture can be broken down into a distributed one.
+
+---
+
 ### TODO: TF-IDF Algorithm
 
-### TODO: Server Startup
+### TODO: Server Startup Algorithm
 
 ### TODO: Comments Re-Organization Algorithm
 
@@ -323,6 +373,8 @@ classDiagram
 ---
 
 ## TODO: Database Design
+
+---
 
 ## Keybindings
 

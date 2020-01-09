@@ -17,6 +17,7 @@
 package io.github.rohitawate.notehero.ingestion;
 
 import io.github.rohitawate.notehero.logging.Logger;
+import io.github.rohitawate.notehero.models.NoteConfig;
 import io.github.rohitawate.notehero.renderer.NoteRenderer;
 import io.github.rohitawate.notehero.renderer.NoteRendererFactory;
 
@@ -28,10 +29,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class IngestionThread implements Runnable {
 	private final String filePath;
-	private String renderedNote = "";
 	private boolean successful;
 	private final Logger logger;
 	private final CountDownLatch latch;
+
+	private String renderedNote = "";
+	private NoteConfig config;
 
 	public IngestionThread(IngestionController controller, String filePath, CountDownLatch latch) {
 		this.logger = controller.logger;
@@ -52,9 +55,10 @@ public class IngestionThread implements Runnable {
 			}
 
 			renderedNote = renderer.render();
+			config = renderer.getConfig();
 			successful = true;
 		} catch (IOException e) {
-			logger.logError("Could not read note: " + getFilePath());
+			logger.logError("Failed to read note: " + getFilePath());
 			successful = false;
 		} finally {
 			latch.countDown();

@@ -34,7 +34,7 @@ public class IngestionThread implements Runnable {
 	private final CountDownLatch latch;
 
 	private String renderedNote = "";
-	private NoteConfig config;
+	private NoteConfig noteConfig;
 
 	public IngestionThread(IngestionController controller, String filePath, CountDownLatch latch) {
 		this.logger = controller.logger;
@@ -55,7 +55,7 @@ public class IngestionThread implements Runnable {
 			}
 
 			renderedNote = renderer.render();
-			config = renderer.getConfig();
+			noteConfig = renderer.getConfig();
 			successful = true;
 		} catch (IOException e) {
 			logger.logError("Failed to read note: " + getFilePath());

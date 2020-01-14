@@ -229,7 +229,7 @@ In case the performance of the above system is poor, we can get rid of the union
 
 ---
 
-### Disk Storage Schema
+### Disk Storage Schema (DiskHero)
 - Storing the notes on the main server's disk would produce many problems:
     - Monolithic architecture
     - Large storage requirements
@@ -276,6 +276,49 @@ notes/
 - The repositories from each of these providers are nested inside this directory.
 - Each of these repositories contains directories corresponding to their commit hash. Each of these in turn contains rendered notes from that Git commit nested as per their category hierarchy.
 - Further down the road, this monolithic storage architecture can be broken down into a distributed one.
+
+### DiskHero Server Endpoints
+
+- All requests must pass through middleware which checks Origin header and only serves requests from the NoteHero server. Else, returns a 403 (Forbidden).
+- DiskHero doesn't concern itself with any of the metadata (`NoteConfig`) related to the notes. This must be handled by NoteHero itself.
+
+#### `GET /nh-username/git-provider/repo-name/cat1/cat2/note-slug`
+- Expected query param: **tier=free/premium/ultimate**
+- Returns a rendered page.
+- Request Content-Type: `text/html`
+- 200 if found, 404 if not.
+
+#### `PUT /nh-username/git-provider/repo-name/cat1/cat2/note-slug`
+- Request Content Type: `application/json`
+- Expected JSON Schema:
+
+```json
+{
+    "ingestionConfig": {
+        "user": {
+            "username": "rohit",
+            "tier": "free/premium/ultimate"
+        },
+        "repoHost": "gh/gl/bb",
+        "repoName": "myNotes",
+        "commitHash": "ee634c967f051f83e1822334d6fb7df03a2276c7"
+    },
+    "noteConfig": {
+        "categories": ["cat1", "cat2", "cat3"],
+        "slug": "my-awesome-note"
+    },
+    "note": "<h1>hello, world!</h1>"
+}
+```
+
+- `commitHash` may be skipped for `free` tier requests. Required for `premium` and `ultimate`.
+- 201 if new note is created, 200 if existing note updated successfully, 409 (Conflict) if there is a conflict in the note path/URL, 400 if any of the required parameters are missing.
+- For 201 and 200, return the `Location` header with the URL to the new resource.
+
+#### `DELETE /nh-username/git-provider/repo-name/cat1/cat2/note-slug`
+- Expected query param: **tier=free/premium/ultimate**
+- Deletes a rendered page.
+- 200 if found and deleted, 404 if not.
 
 ---
 

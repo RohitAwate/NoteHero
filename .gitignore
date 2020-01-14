@@ -23,7 +23,10 @@
 hs_err_pid*
 
 # Directories
-.idea
-.vscode
-.settings
+.idea/
+.vscode/
+.settings/
 target/
+
+# Build
+NoteHero.iml

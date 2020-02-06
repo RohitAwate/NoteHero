@@ -66,7 +66,17 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 	}
 
 	private void addToFreqMap(Map<Token, Integer> map, Token token) {
-		// TODO: perform stemming/lemmatization on the lexeme
+		/*
+			TODO: Perform text pre-processing
+			- remove punctuation
+			- convert to lowercase
+			- stemming/lemmatization
+		 */
+		token.lexeme = token.lexeme.replaceAll("[^a-zA-Z0-9]+", "");
+		token.lexeme = token.lexeme.toLowerCase();
+
+		if (token.lexeme.isEmpty()) return;
+
 		if (map.containsKey(token)) {
 			map.replace(token, map.get(token) + 1);
 		} else {
@@ -127,7 +137,8 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 		for (TermFrequencyMap<Token, Integer> tfMap : termFreqMaps) {
 			for (Map.Entry<Token, Integer> entry : tfMap.entrySet()) {
 				int df = getDocFreq(entry.getKey());
-				int score = (int) (entry.getValue() * Math.log((double) termFreqMaps.size() / df));
+				double score = ((double) entry.getValue()) * Math.log((double) termFreqMaps.size() / df);
+				if (score == 0.0) continue;
 				addToIndex(index, tfMap.docID, entry.getKey(), score);
 			}
 		}
@@ -153,7 +164,7 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 	 * @param token - the token to be added
 	 * @param score - the token's TF-IDF score for that document
 	 */
-	private void addToIndex(Map<String, IndexData> index, int docID, Token token, int score) {
+	private void addToIndex(Map<String, IndexData> index, int docID, Token token, double score) {
 		IndexData indexData;
 		if ((indexData = index.getOrDefault(token.lexeme, null)) != null) {
 			IndexData.DocumentData documentData;

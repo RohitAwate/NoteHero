@@ -16,8 +16,6 @@
 
 package io.github.rohitawate.notehero.search;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,26 +24,24 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import java.util.HashMap;
+import java.util.Map;
 
 class TFIDFIndexBuilderTest {
 	@Test
-	void tokenize() throws IOException, URISyntaxException {
-		String s = "\n\nHello world this \n\tis NoteHero\n\n I am \n\namazing\n\n";
-		IndexBuilder builder = new TFIDFIndexBuilder(s);
-		List<IndexBuilder.Token> tokens = builder.tokenize();
+	void build() throws IOException, URISyntaxException {
+		Map<Integer, String> docs = new HashMap<>();
+		docs.put(1, readFile("TheDarkKnight"));
+		docs.put(2, readFile("Java"));
+		docs.put(3, readFile("DNA"));
 
-		// Load test case
-		URL url = getClass().getResource("TFIDFIndexBuilder/TestCase.json");
+		IndexBuilder builder = new TFIDFIndexBuilder(docs);
+		Map<String, IndexBuilder.IndexData> index = builder.build();
+	}
+
+	private static String readFile(String name) throws URISyntaxException, IOException {
+		URL url = TFIDFIndexBuilderTest.class.getResource("TFIDFIndexBuilder/" + name + ".txt");
 		Path path = Paths.get(url.toURI());
-		String fileContents = new String(Files.readAllBytes(path));
-
-		ObjectMapper mapper = new JsonMapper();
-		List<IndexBuilder.Token> expectedTokens =
-				mapper.readValue(fileContents, mapper.getTypeFactory().constructCollectionType(List.class, IndexBuilder.Token.class));
-
-		assertArrayEquals(expectedTokens.toArray(), tokens.toArray());
+		return new String(Files.readAllBytes(path));
 	}
 }

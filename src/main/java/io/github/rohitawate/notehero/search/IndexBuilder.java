@@ -63,7 +63,7 @@ public interface IndexBuilder {
 			}
 		}
 
-		final String lexeme;
+		String lexeme;
 		final Location location;
 
 		public Token(@JsonProperty("lexeme") String lexeme,
@@ -78,6 +78,11 @@ public interface IndexBuilder {
 			if (o == null || getClass() != o.getClass()) return false;
 			Token token = (Token) o;
 			return Objects.equals(lexeme, token.lexeme);    // TODO: check location as well
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(lexeme);
 		}
 	}
 
@@ -95,10 +100,10 @@ public interface IndexBuilder {
 		 * DocumentData stores the token's score and occurrences within itself.
 		 */
 		static class DocumentData {
-			final int score;
+			final double score;
 			final ArrayList<Token.Location> occurrences;
 
-			DocumentData(int score) {
+			DocumentData(double score) {
 				this.score = score;
 				this.occurrences = new ArrayList<>();
 			}

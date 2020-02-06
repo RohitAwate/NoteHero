@@ -19,7 +19,7 @@ package io.github.rohitawate.notehero.search;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -77,44 +77,38 @@ public interface IndexBuilder {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			Token token = (Token) o;
-			return Objects.equals(lexeme, token.lexeme) &&
-					Objects.equals(location, token.location);
+			return Objects.equals(lexeme, token.lexeme);    // TODO: check location as well
 		}
 	}
 
 	/**
-	 * Produces a set of tokens from the input note string.
-	 *
-	 * @return List of tokens
-	 */
-	List<Token> tokenize();
-
-	/**
-	 * Index stores the actual information about a token
-	 * and its occurrences in the notes.
+	 * IndexData stores the actual information about a token i.e. the
+	 * documents it appears in, its respective score and locations.
 	 * <p>
-	 * The core data structure is an associated array
-	 * with the token's lexeme for a key and a list of documents
-	 * in which it appears as a value.
+	 * The core data structure is an associated array with the
+	 * document's path for a key and the score and location as values.
 	 * <p>
-	 * Refer DESIGN.md for more details about the index.
+	 * Refer DESIGN.md for more details about the search index.
 	 */
-	class Index {
+	class IndexData {
 		/**
-		 * Document stores the token's score and occurrences
-		 * within itself.
+		 * DocumentData stores the token's score and occurrences within itself.
 		 */
-		static class Document {
+		static class DocumentData {
 			final int score;
 			final ArrayList<Token.Location> occurrences;
 
-			Document(int score) {
+			DocumentData(int score) {
 				this.score = score;
 				this.occurrences = new ArrayList<>();
 			}
 		}
 
-		Map<String, List<Document>> index;
+		/*
+			 Key: Document's unique ID
+			 Value: Score and list of occurrences (IndexData)
+		*/
+		Map<Integer, DocumentData> index = new HashMap<>();
 	}
 
 	/**
@@ -123,5 +117,5 @@ public interface IndexBuilder {
 	 *
 	 * @return Map representing the search index
 	 */
-	Map<String, Index> build();
+	Map<String, IndexData> build();
 }

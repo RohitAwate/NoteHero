@@ -19,7 +19,6 @@ package io.github.rohitawate.notehero.config;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import io.github.rohitawate.notehero.ingestion.IngestionController;
-import io.github.rohitawate.notehero.ingestion.IngestionThread;
 import io.github.rohitawate.notehero.models.NoteConfig;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +37,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void positive() throws IOException, URISyntaxException {
 		YFMTestCase positive = loadTest("Positive.xml");
-		YAMLFrontMatterProcessor positiveProc = new YAMLFrontMatterProcessor(positive.full, new IngestionThread(controller, positive.filePath, null));
+		YAMLFrontMatterProcessor positiveProc = new YAMLFrontMatterProcessor(positive.full, new IngestionController(controller, positive.filePath, null));
 
 		assertEquals(positiveProc.getConfigString(), positive.expectedYFM);
 		assertEquals(positiveProc.getStrippedNote(), positive.expectedNote);
@@ -48,7 +47,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void leadingWhitespace() throws IOException, URISyntaxException {
 		YFMTestCase leadingWhitespace = loadTest("LeadingWhitespace.xml");
-		YAMLFrontMatterProcessor leadingWhitespaceProc = new YAMLFrontMatterProcessor(leadingWhitespace.full, new IngestionThread(controller, leadingWhitespace.filePath, null));
+		YAMLFrontMatterProcessor leadingWhitespaceProc = new YAMLFrontMatterProcessor(leadingWhitespace.full, new IngestionController(controller, leadingWhitespace.filePath, null));
 
 		assertEquals(leadingWhitespaceProc.getConfigString(), leadingWhitespace.expectedYFM);
 		assertEquals(leadingWhitespaceProc.getStrippedNote(), leadingWhitespace.expectedNote);
@@ -58,7 +57,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void emptyFrontMatter() throws IOException, URISyntaxException {
 		YFMTestCase emptyFrontMatter = loadTest("EmptyFrontMatter.xml");
-		YAMLFrontMatterProcessor emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, new IngestionThread(controller, emptyFrontMatter.filePath, null));
+		YAMLFrontMatterProcessor emptyFrontMatterProc = new YAMLFrontMatterProcessor(emptyFrontMatter.full, new IngestionController(controller, emptyFrontMatter.filePath, null));
 
 		assertEquals(emptyFrontMatterProc.getConfigString(), emptyFrontMatter.expectedYFM);
 		assertEquals(emptyFrontMatterProc.getStrippedNote(), emptyFrontMatter.expectedNote);
@@ -68,7 +67,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noFrontMatter() throws IOException, URISyntaxException {
 		YFMTestCase noFrontMatter = loadTest("NoFrontMatter.xml");
-		YAMLFrontMatterProcessor noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, new IngestionThread(controller, noFrontMatter.filePath, null));
+		YAMLFrontMatterProcessor noFrontMatterProc = new YAMLFrontMatterProcessor(noFrontMatter.full, new IngestionController(controller, noFrontMatter.filePath, null));
 
 		assertEquals(noFrontMatterProc.getConfigString(), noFrontMatter.expectedYFM);
 		assertEquals(noFrontMatterProc.getStrippedNote(), noFrontMatter.expectedNote);
@@ -78,7 +77,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noOpenDelim() throws IOException, URISyntaxException {
 		YFMTestCase noOpenDelim = loadTest("NoOpenDelim.xml");
-		YAMLFrontMatterProcessor noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, new IngestionThread(controller, noOpenDelim.filePath, null));
+		YAMLFrontMatterProcessor noOpenDelimProc = new YAMLFrontMatterProcessor(noOpenDelim.full, new IngestionController(controller, noOpenDelim.filePath, null));
 
 		assertEquals(noOpenDelimProc.getConfigString(), noOpenDelim.expectedYFM);
 		assertEquals(noOpenDelimProc.getStrippedNote(), noOpenDelim.expectedNote);
@@ -88,7 +87,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void noCloseDelim() throws IOException, URISyntaxException {
 		YFMTestCase noCloseDelim = loadTest("NoCloseDelim.xml");
-		YAMLFrontMatterProcessor noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, new IngestionThread(controller, noCloseDelim.filePath, null));
+		YAMLFrontMatterProcessor noCloseDelimProc = new YAMLFrontMatterProcessor(noCloseDelim.full, new IngestionController(controller, noCloseDelim.filePath, null));
 
 		assertEquals(noCloseDelimProc.getConfigString(), noCloseDelim.expectedYFM);
 		assertEquals(noCloseDelimProc.getStrippedNote(), noCloseDelim.expectedNote);
@@ -98,7 +97,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void emptySource() throws IOException, URISyntaxException {
 		YFMTestCase emptySource = loadTest("EmptySource.xml");
-		YAMLFrontMatterProcessor emptySourceProc = new YAMLFrontMatterProcessor(emptySource.full, new IngestionThread(controller, emptySource.filePath, null));
+		YAMLFrontMatterProcessor emptySourceProc = new YAMLFrontMatterProcessor(emptySource.full, new IngestionController(controller, emptySource.filePath, null));
 
 		assertEquals(emptySourceProc.getConfigString(), emptySource.expectedYFM);
 		assertEquals(emptySourceProc.getStrippedNote(), emptySource.expectedNote);
@@ -108,7 +107,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void singleDelim() throws IOException, URISyntaxException {
 		YFMTestCase singleDelim = loadTest("SingleDelim.xml");
-		YAMLFrontMatterProcessor singleDelimProc = new YAMLFrontMatterProcessor(singleDelim.full, new IngestionThread(controller, singleDelim.filePath, null));
+		YAMLFrontMatterProcessor singleDelimProc = new YAMLFrontMatterProcessor(singleDelim.full, new IngestionController(controller, singleDelim.filePath, null));
 
 		assertEquals(singleDelimProc.getConfigString(), singleDelim.expectedYFM);
 		assertEquals(singleDelimProc.getStrippedNote(), singleDelim.expectedNote);
@@ -118,7 +117,7 @@ class YAMLFrontMatterProcessorTest {
 	@Test
 	void bothDelim() throws IOException, URISyntaxException {
 		YFMTestCase bothDelim = loadTest("BothDelim.xml");
-		YAMLFrontMatterProcessor bothDelimProc = new YAMLFrontMatterProcessor(bothDelim.full, new IngestionThread(controller, bothDelim.filePath, null));
+		YAMLFrontMatterProcessor bothDelimProc = new YAMLFrontMatterProcessor(bothDelim.full, new IngestionController(controller, bothDelim.filePath, null));
 
 		assertEquals(bothDelimProc.getConfigString(), bothDelim.expectedYFM);
 		assertEquals(bothDelimProc.getStrippedNote(), bothDelim.expectedNote);

@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.renderer;
+package io.github.rohitawate.notehero.models;
 
-import io.github.rohitawate.notehero.ingestion.IngestionController;
+public class Note {
+	public final String renderedNote;
+	public final NoteConfig config;
 
-import java.io.File;
-
-public class NoteRendererFactory {
-	public static NoteRenderer get(String noteSource, String filePath, IngestionController controller) {
-		String fileName = new File(filePath).getName();
-
-		if (fileName.endsWith(".md") || fileName.endsWith(".markdown") || fileName.endsWith(".mdown") || fileName.endsWith(".mkd")) {
-			return new MarkdownRenderer(noteSource, filePath, controller);
-		} else {
-			return null;
-		}
+	public Note(String renderedNote, NoteConfig config) {
+		this.renderedNote = renderedNote;
+		this.config = config;
 	}
 }

@@ -24,19 +24,19 @@ class NoteRendererFactoryTest {
 
 	@Test
 	void get() {
-		assertNotNull(NoteRendererFactory.get(".md", "", null));
-		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get(".md", "", null).getClass());
+		assertNotNull(NoteRendererFactory.get("", ".md", null));
+		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get("", ".md", null).getClass());
 
-		assertNotNull(NoteRendererFactory.get(".markdown", "", null));
-		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get(".markdown", "", null).getClass());
+		assertNotNull(NoteRendererFactory.get("", ".markdown", null));
+		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get("", ".markdown", null).getClass());
 
-		assertNotNull(NoteRendererFactory.get(".mdown", "", null));
-		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get(".mdown", "", null).getClass());
+		assertNotNull(NoteRendererFactory.get("", ".mdown", null));
+		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get("", ".mdown", null).getClass());
 
-		assertNotNull(NoteRendererFactory.get(".mkd", "", null));
-		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get(".mkd", "", null).getClass());
+		assertNotNull(NoteRendererFactory.get("", ".mkd", null));
+		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get("", ".mkd", null).getClass());
 
-		assertNull(NoteRendererFactory.get(".txt", "", null));
+		assertNull(NoteRendererFactory.get("", ".txt", null));
 		assertNull(NoteRendererFactory.get("", "", null));
 	}
 }

@@ -16,7 +16,7 @@
 
 package io.github.rohitawate.notehero.config;
 
-import io.github.rohitawate.notehero.ingestion.IngestionThread;
+import io.github.rohitawate.notehero.ingestion.IngestionController;
 import io.github.rohitawate.notehero.models.NoteConfig;
 import io.github.rohitawate.notehero.text.CaseFormat;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +32,8 @@ import java.util.Stack;
  */
 class YAMLFrontMatterProcessor implements ConfigProcessor {
 	private String noteSource;
+	private final String filePath;
+
 	private String yamlSource = "";
 	private NoteConfig config;
 
@@ -40,11 +42,12 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 Used to skip subsequent calls.
 	*/
 	private boolean noFrontMatter;
-	private IngestionThread ingestionThread;
+	private IngestionController controller;
 
-	public YAMLFrontMatterProcessor(String noteSource, IngestionThread ingestionThread) {
+	public YAMLFrontMatterProcessor(String noteSource, String filePath, IngestionController controller) {
 		this.noteSource = noteSource;
-		this.ingestionThread = ingestionThread;
+		this.filePath = filePath;
+		this.controller = controller;
 	}
 
 	/**
@@ -130,9 +133,9 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		Map<String, Object> noteHero = (Map<String, Object>) yamlMap.get("notehero");
 
 		String title = String.valueOf(
-				noteHero.getOrDefault("title", generateDefaultTitle(ingestionThread.getFilePath())));
+				noteHero.getOrDefault("title", generateDefaultTitle(filePath)));
 		String slug = String.valueOf(
-				noteHero.getOrDefault("slug", generateDefaultSlug(ingestionThread.getFilePath())));
+				noteHero.getOrDefault("slug", generateDefaultSlug(filePath)));
 
 		boolean sudo = true;    // defaults to true
 		if (noteHero.containsKey("sudo")) {
@@ -177,7 +180,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		// The source MUST start with the opening delimiter
 		if (!noteSource.startsWith(yfmDelimiter)) {
-			ingestionThread.getLogger().logWarning("YAML Front Matter not found at start of file.");
+			controller.getLogger().logWarning("YAML Front Matter not found at start of file.");
 			noFrontMatter = true;
 			return;
 		}
@@ -188,7 +191,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		 length of the opening delimiter (3) and the newline (1).
 		*/
 		if (noteSource.length() == 4) {
-			ingestionThread.getLogger().logWarning("YAML Front Matter not terminated.");
+			controller.getLogger().logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
@@ -199,7 +202,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		*/
 		int end = noteSource.indexOf(yfmDelimiter, 4);
 		if (end == -1) {
-			ingestionThread.getLogger().logWarning("YAML Front Matter not terminated.");
+			controller.getLogger().logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
 		}
@@ -245,7 +248,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 */
 	private String[] generateDefaultCategories() {
 		// Obtain the file's path
-		String filePath = ingestionThread.getFilePath();
+		String path = filePath;
 
 		/*
 		 NoteHero expects all note sources to reside within
@@ -254,21 +257,21 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		 within the notes/ directory. Thus, we take the substring
 		 starting after notes/.
 		*/
-		filePath = filePath.substring(filePath.indexOf("notes/") + 6);
+		path = path.substring(path.indexOf("notes/") + 6);
 
 		/*
 		 If the note resides within notes/, then filePath should only
 		 contain the its filename and thus leave no room for us to
 		 deduce any categories. We return an empty string array.
 		*/
-		if (filePath.equals(getFileName(filePath))) return new String[]{};
+		if (path.equals(getFileName(path))) return new String[]{};
 
 		/*
 		 Else, note resides within some directory hierarchy within notes/.
 		 In this case, we extract the directory names to build up
 		 our string array of categories.
 		*/
-		File fd = new File(filePath);
+		File fd = new File(path);
 		Stack<String> categoryStack = new Stack<>();
 
 		String category;
@@ -323,7 +326,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 	 * @return NoteConfig instance initialized with default values
 	 */
 	private NoteConfig generateDefaultConfig() {
-		return new NoteConfig(generateDefaultTitle(ingestionThread.getFilePath()), generateDefaultCategories(),
-				generateDefaultSlug(ingestionThread.getFilePath()), true);
+		return new NoteConfig(generateDefaultTitle(filePath), generateDefaultCategories(),
+				generateDefaultSlug(filePath), true);
 	}
 }

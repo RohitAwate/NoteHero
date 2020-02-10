@@ -18,36 +18,59 @@ package io.github.rohitawate.notehero.ingestion;
 
 import io.github.rohitawate.notehero.logging.Log;
 import io.github.rohitawate.notehero.logging.Logger;
+import io.github.rohitawate.notehero.models.Note;
+import io.github.rohitawate.notehero.renderer.NoteRenderer;
+import io.github.rohitawate.notehero.renderer.NoteRendererFactory;
 
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class IngestionController {
 	final Logger logger = new Logger(Log.Level.WARNING);
 
-	private final ArrayList<String> candidateFiles;
+	private final List<String> candidateFiles;
 
-	public IngestionController(ArrayList<String> candidateFiles) {
+	public IngestionController(List<String> candidateFiles) {
 		this.candidateFiles = candidateFiles;
 	}
 
-	public void ingest() {
-		CountDownLatch latch = new CountDownLatch(candidateFiles.size());
-		ExecutorService executor = Executors.newCachedThreadPool();
+	public void ingestAll() {
+		Note[] notes = new Note[candidateFiles.size()];
 
-		IngestionThread[] threads = new IngestionThread[candidateFiles.size()];
 		for (int i = 0; i < candidateFiles.size(); i++) {
-			threads[i] = new IngestionThread(this, candidateFiles.get(i), latch);
-			executor.execute(threads[i]);
+			notes[i] = processNote(candidateFiles.get(i));
 		}
+	}
+
+	private Note processNote(String filePath) {
+		Note ingestedNote = null;
 
 		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			executor.shutdownNow();
-			logger.logError("Ingestion failed due to interruption during rendering.");
+			String noteSource = readNoteFromDisk(filePath);
+			NoteRenderer renderer = NoteRendererFactory.get(noteSource, filePath, this);
+
+			if (renderer == null) {
+				logger.logError("Unknown source format: " + filePath);
+				return null;
+			}
+
+			ingestedNote = new Note(renderer.render(), renderer.getConfig());
+		} catch (IOException e) {
+			logger.logError("Failed to read note: " + filePath);
 		}
+
+		return ingestedNote;
+	}
+
+	private String readNoteFromDisk(String filePath) throws IOException {
+		Path path = Paths.get(filePath);
+		return new String(Files.readAllBytes(path));
+	}
+
+	public Logger getLogger() {
+		return logger;
 	}
 }

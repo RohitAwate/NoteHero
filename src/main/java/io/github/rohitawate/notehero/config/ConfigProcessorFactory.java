@@ -16,14 +16,14 @@
 
 package io.github.rohitawate.notehero.config;
 
-import io.github.rohitawate.notehero.ingestion.IngestionThread;
+import io.github.rohitawate.notehero.ingestion.IngestionController;
 
 public class ConfigProcessorFactory {
-	public static ConfigProcessor get(String type, String noteSource, IngestionThread ingestionThread) {
+	public static ConfigProcessor get(String type, String noteSource, String filePath, IngestionController controller) {
 		switch (type) {
 			case "yaml":
 			case "yml":
-				return new YAMLFrontMatterProcessor(noteSource, ingestionThread);
+				return new YAMLFrontMatterProcessor(noteSource, filePath, controller);
 			default:
 				return null;
 		}

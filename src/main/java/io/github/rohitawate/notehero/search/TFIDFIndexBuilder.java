@@ -71,6 +71,8 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 			- remove punctuation
 			- convert to lowercase
 			- stemming/lemmatization
+			- stop-word removal (TODO: See if this is necessary if we discard the
+			                      lower score entries from the index later)
 		 */
 		token.lexeme = token.lexeme.replaceAll("[^a-zA-Z0-9]+", "");
 		token.lexeme = token.lexeme.toLowerCase();
@@ -112,11 +114,8 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 	private int getDocFreq(Token token) {
 		int df = 0;
 
-		for (Map<Token, Integer> tfMap : termFreqMaps) {
-			if (tfMap.containsKey(token)) {
-				df++;
-			}
-		}
+		for (Map<Token, Integer> tfMap : termFreqMaps)
+			if (tfMap.containsKey(token)) df++;
 
 		return df;
 	}

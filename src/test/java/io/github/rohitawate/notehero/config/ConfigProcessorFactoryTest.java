@@ -24,13 +24,13 @@ class ConfigProcessorFactoryTest {
 
 	@Test
 	void get() {
-		assertNotNull(ConfigProcessorFactory.get("yaml", "", null));
-		assertEquals(YAMLFrontMatterProcessor.class, ConfigProcessorFactory.get("yaml", "", null).getClass());
+		assertNotNull(ConfigProcessorFactory.get("yaml", "", null, null));
+		assertEquals(YAMLFrontMatterProcessor.class, ConfigProcessorFactory.get("yaml", "", null, null).getClass());
 
-		assertNotNull(ConfigProcessorFactory.get("yml", "", null));
-		assertEquals(YAMLFrontMatterProcessor.class, ConfigProcessorFactory.get("yml", "", null).getClass());
+		assertNotNull(ConfigProcessorFactory.get("yml", "", null, null));
+		assertEquals(YAMLFrontMatterProcessor.class, ConfigProcessorFactory.get("yml", "", null, null).getClass());
 
-		assertNull(ConfigProcessorFactory.get("unknown", "", null));
-		assertNull(ConfigProcessorFactory.get("", "", null));
+		assertNull(ConfigProcessorFactory.get("unknown", "", null, null));
+		assertNull(ConfigProcessorFactory.get("", "", null, null));
 	}
 }

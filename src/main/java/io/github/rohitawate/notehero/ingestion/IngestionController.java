@@ -31,17 +31,17 @@ import java.util.List;
 public class IngestionController {
 	final Logger logger = new Logger(Log.Level.WARNING);
 
-	private final List<String> candidateFiles;
+	private final List<String> candidateFilePaths;
 
-	public IngestionController(List<String> candidateFiles) {
-		this.candidateFiles = candidateFiles;
+	public IngestionController(List<String> candidateFilePaths) {
+		this.candidateFilePaths = candidateFilePaths;
 	}
 
 	public void ingestAll() {
-		Note[] notes = new Note[candidateFiles.size()];
+		Note[] notes = new Note[candidateFilePaths.size()];
 
-		for (int i = 0; i < candidateFiles.size(); i++) {
-			notes[i] = processNote(candidateFiles.get(i));
+		for (int i = 0; i < candidateFilePaths.size(); i++) {
+			notes[i] = processNote(candidateFilePaths.get(i));
 		}
 	}
 

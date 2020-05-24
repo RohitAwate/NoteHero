@@ -415,8 +415,13 @@ classDiagram
 
 ---
 
-## TODO: Database Design
+## Database Schema
 
+<center>
+
+![Database Schema](assets/DBSchema.png)
+
+</center>
 ---
 
 ## Keybindings

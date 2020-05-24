@@ -190,7 +190,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 		 Thus, we ensure that the noteSource is more than the combined
 		 length of the opening delimiter (3) and the newline (1).
 		*/
-		if (noteSource.length() == 4) {
+		if (noteSource.length() < 4) {
 			controller.getLogger().logWarning("YAML Front Matter not terminated.");
 			noFrontMatter = true;
 			return;
@@ -261,7 +261,7 @@ class YAMLFrontMatterProcessor implements ConfigProcessor {
 
 		/*
 		 If the note resides within notes/, then filePath should only
-		 contain the its filename and thus leave no room for us to
+		 contain its filename and thus leave no room for us to
 		 deduce any categories. We return an empty string array.
 		*/
 		if (path.equals(getFileName(path))) return new String[]{};

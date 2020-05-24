@@ -16,6 +16,10 @@
 
 package io.github.rohitawate.notehero.models;
 
+/**
+ * A Note object contains the rendered
+ * note and its configuration.
+ */
 public class Note {
 	public final String renderedNote;
 	public final NoteConfig config;

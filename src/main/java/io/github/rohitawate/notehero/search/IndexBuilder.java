@@ -110,8 +110,8 @@ public interface IndexBuilder {
 		}
 
 		/*
-			 Key: Document's unique ID
-			 Value: Score and list of occurrences (IndexData)
+		 Key: Document's unique ID
+		 Value: Score and list of occurrences (DocumentData)
 		*/
 		Map<Integer, DocumentData> index = new HashMap<>();
 	}

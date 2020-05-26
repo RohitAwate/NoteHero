@@ -29,6 +29,10 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 
 	private final List<TermFrequencyMap<Token, Integer>> termFreqMaps = new ArrayList<>();
 
+	/**
+	 * @param docs - map with a unique integer identifying the document for the key,
+	 *             and the document's contents as the value
+	 */
 	public TFIDFIndexBuilder(Map<Integer, String> docs) {
 		this.docs = docs;
 	}

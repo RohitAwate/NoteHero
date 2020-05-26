@@ -41,28 +41,24 @@ public class IngestionController {
 		Note[] notes = new Note[candidateFilePaths.size()];
 
 		for (int i = 0; i < candidateFilePaths.size(); i++) {
-			notes[i] = processNote(candidateFilePaths.get(i));
+			String currentPath = candidateFilePaths.get(i);
+			try {
+				notes[i] = processNote(readNoteFromDisk(currentPath), currentPath);
+			} catch (IOException e) {
+				logger.logWarning("Error while reading file: " + currentPath);
+			}
 		}
 	}
 
-	private Note processNote(String filePath) {
-		Note ingestedNote = null;
+	private Note processNote(String noteSource, String filePath) {
+		NoteRenderer renderer = NoteRendererFactory.get(noteSource, filePath, this);
 
-		try {
-			String noteSource = readNoteFromDisk(filePath);
-			NoteRenderer renderer = NoteRendererFactory.get(noteSource, filePath, this);
-
-			if (renderer == null) {
-				logger.logError("Unknown source format: " + filePath);
-				return null;
-			}
-
-			ingestedNote = new Note(renderer.render(), renderer.getConfig());
-		} catch (IOException e) {
-			logger.logError("Failed to read note: " + filePath);
+		if (renderer == null) {
+			logger.logError("Unknown file format: " + filePath);
+			return null;
 		}
 
-		return ingestedNote;
+		return new Note(renderer.render(), renderer.getConfig());
 	}
 
 	private String readNoteFromDisk(String filePath) throws IOException {

@@ -28,4 +28,12 @@ public class Note {
 		this.renderedNote = renderedNote;
 		this.config = config;
 	}
+
+	@Override
+	public String toString() {
+		return "Note{" +
+				"renderedNote='" + renderedNote + '\'' +
+				", config=" + config +
+				'}';
+	}
 }

@@ -16,60 +16,78 @@
 
 package io.github.rohitawate.notehero.search;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import io.github.rohitawate.notehero.language.English;
+
 import java.util.Map;
 
 public class TFIDFIndexBuilder implements IndexBuilder {
-	private Map<Integer, String> docs;
+	private Map<Integer, String> candidateDocs;
+
+	// parser variables
 	private int line;
 	private int start;
 	private int current;
 
-	private final List<TermFrequencyMap<Token, Integer>> termFreqMaps = new ArrayList<>();
+	private final Index index = new Index();
 
 	/**
-	 * @param docs - map with a unique integer identifying the document for the key,
-	 *             and the document's contents as the value
+	 * @param candidateDocs - map with a unique integer identifying the document for the key,
+	 *                      and the document's contents as the value
 	 */
-	public TFIDFIndexBuilder(Map<Integer, String> docs) {
-		this.docs = docs;
+	public TFIDFIndexBuilder(Map<Integer, String> candidateDocs) {
+		this.candidateDocs = candidateDocs;
 	}
 
-	private void buildTermFreqMaps() {
-		for (Map.Entry<Integer, String> pair : docs.entrySet()) {
-			resetParser();
-			termFreqMaps.add(getTermFreqMap(pair.getKey(), pair.getValue()));
-		}
-	}
+	@Override
+	public Index build() {
+		/*
+			- scan all documents, tokenize them, and generate document maps
+			- iterate over document maps and their tokens and calculate their TF-IDF
+				- find document frequency from other maps
+			- TF-IDF score = tf * log(number of documents/df)
+		 */
 
-	static class TermFrequencyMap<K, V> extends HashMap<K, V> {
-		private int docID;
+		buildDocuments();
 
-		private TermFrequencyMap(int docID) {
-			this.docID = docID;
-		}
-	}
+		for (Document document : index) {
+			for (Map.Entry<String, TokenData> pair : document.entrySet()) {
+				String token = pair.getKey();
+				TokenData tokenData = pair.getValue();
 
-	private TermFrequencyMap<Token, Integer> getTermFreqMap(int docID, String contents) {
-		contents = contents.trim();
-		TermFrequencyMap<Token, Integer> termFrequencies = new TermFrequencyMap<>(docID);
-
-		for (; current < contents.length(); current++) {
-			if (start != current && Character.isWhitespace(contents.codePointAt(current))) {
-				addToFreqMap(termFrequencies, getToken(contents));
-				skipWhitespace(contents);
+				int documentFreq = getDocFreq(token);
+				tokenData.score = tokenData.score * (float) Math.log((double) index.size() / documentFreq);
 			}
 		}
 
-		// Add last token
-		addToFreqMap(termFrequencies, getToken(contents));
-
-		return termFrequencies;
+		return index;
 	}
 
-	private void addToFreqMap(Map<Token, Integer> map, Token token) {
+	private void buildDocuments() {
+		for (Map.Entry<Integer, String> pair : candidateDocs.entrySet()) {
+			resetParser();
+
+			String contents = pair.getValue();
+			contents = contents.trim();
+			Document document = new Document(pair.getKey());
+
+			// iterate over document and generate tokens
+			for (; current < contents.length(); current++) {
+				if (start != current && Character.isWhitespace(contents.codePointAt(current))) {
+					// add token to document
+					addToDocument(document, getToken(contents), new Location(line, start, current));
+					skipWhitespace(contents);
+				}
+			}
+
+			// Add last token
+			addToDocument(document, getToken(contents), new Location(line, start, current));
+
+			// add document to main list
+			index.add(document);
+		}
+	}
+
+	private void addToDocument(Document document, String token, Location location) {
 		/*
 			TODO: Perform text pre-processing
 			- remove punctuation
@@ -78,16 +96,23 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 			- stop-word removal (TODO: See if this is necessary if we discard the
 			                      lower score entries from the index later)
 		 */
-		token.lexeme = token.lexeme.replaceAll("[^a-zA-Z0-9]+", "");
-		token.lexeme = token.lexeme.toLowerCase();
+		token = token.replaceAll("[^a-zA-Z0-9]+", "");
+		token = token.toLowerCase();
 
-		if (token.lexeme.isEmpty()) return;
+		// To avoid empty strings, single letters, numbers, or stop words
+		if (token.length() < 2 || token.matches("[0-9]+") || English.isStopWord(token)) return;
 
-		if (map.containsKey(token)) {
-			map.replace(token, map.get(token) + 1);
+		TokenData data;
+		if (document.containsKey(token)) {
+			data = document.get(token);
+			data.score++;
 		} else {
-			map.put(token, 1);
+			data = new TokenData();
+			data.score = 1;
 		}
+
+		data.occurrences.add(location);
+		document.put(token, data);
 	}
 
 	private void resetParser() {
@@ -96,8 +121,8 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 		current = 0;
 	}
 
-	private Token getToken(String input) {
-		return new Token(input.substring(start, current), new Token.Location(line, start, current));
+	private String getToken(String input) {
+		return input.substring(start, current);
 	}
 
 	private void checkNewLine(String input) {
@@ -115,75 +140,12 @@ public class TFIDFIndexBuilder implements IndexBuilder {
 		start = current;
 	}
 
-	private int getDocFreq(Token token) {
+	private int getDocFreq(String token) {
 		int df = 0;
 
-		for (Map<Token, Integer> tfMap : termFreqMaps)
-			if (tfMap.containsKey(token)) df++;
+		for (Document document : index)
+			if (document.containsKey(token)) df++;
 
 		return df;
-	}
-
-	@Override
-	public Map<String, IndexData> build() {
-		/*
-			- iterate over all documents, tokenize them, and get term frequency maps
-			- iterate over each map, and over each token and calculate TF-IDF
-			- find document frequency from other maps
-			- TF-IDF score = tf * log(number of documents/df)
-			- add the token to the index
-		 */
-
-		buildTermFreqMaps();
-		Map<String, IndexData> index = new HashMap<>();
-
-		for (TermFrequencyMap<Token, Integer> tfMap : termFreqMaps) {
-			for (Map.Entry<Token, Integer> entry : tfMap.entrySet()) {
-				int df = getDocFreq(entry.getKey());
-				double score = ((double) entry.getValue()) * Math.log((double) termFreqMaps.size() / df);
-				if (score == 0.0) continue;
-				addToIndex(index, tfMap.docID, entry.getKey(), score);
-			}
-		}
-
-		return index;
-	}
-
-	/**
-	 * Adds the token to index.
-	 * <p>
-	 * Please refer to DESIGN.md for a diagram of the index structure.
-	 * <p>
-	 * First, we check if the token's lexeme is already part of the map.
-	 * If not, we add a new key and a corresponding IndexData object as value.
-	 * <p>
-	 * If yes, we must check if the corresponding document has been added to the
-	 * Index object. If not, we add a key with the corresponding DocumentData object.
-	 * <p>
-	 * If yes, we add the token's location data to the list of occurrences.
-	 *
-	 * @param index - the core map of the index
-	 * @param docID - the unique key of the document to which the token belongs
-	 * @param token - the token to be added
-	 * @param score - the token's TF-IDF score for that document
-	 */
-	private void addToIndex(Map<String, IndexData> index, int docID, Token token, double score) {
-		IndexData indexData;
-		if ((indexData = index.getOrDefault(token.lexeme, null)) != null) {
-			IndexData.DocumentData documentData;
-			if ((documentData = indexData.index.getOrDefault(docID, null)) != null) {
-				documentData.occurrences.add(token.location);
-			} else {
-				documentData = new IndexData.DocumentData(score);
-				documentData.occurrences.add(token.location);
-				indexData.index.put(docID, documentData);
-			}
-		} else {
-			IndexData newIndexData = new IndexData();
-			IndexData.DocumentData newDocumentData = new IndexData.DocumentData(score);
-			newDocumentData.occurrences.add(token.location);
-			newIndexData.index.put(docID, newDocumentData);
-			index.put(token.lexeme, newIndexData);
-		}
 	}
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero.search;
+package io.github.rohitawate.notehero.language;
 
-import org.junit.jupiter.api.Test;
+import io.github.rohitawate.notehero.text.CaseFormat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,24 +24,29 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-class TFIDFIndexBuilderTest {
-	@Test
-	void build() throws IOException, URISyntaxException {
-		Map<Integer, String> docs = new HashMap<>();
-		docs.put(1, readFile("TheDarkKnight"));
-		docs.put(2, readFile("Java"));
-		docs.put(3, readFile("DNA"));
+public class English {
+	public static final Set<String> STOPWORDS = new HashSet<>();
 
-		IndexBuilder builder = new TFIDFIndexBuilder(docs);
-		Index index = builder.build();
+	public static boolean isStopWord(String word) {
+		if (STOPWORDS.isEmpty()) {
+			try {
+				loadStopwords();
+			} catch (IOException | URISyntaxException e) {
+				return false;
+			}
+		}
+
+		return STOPWORDS.contains(word.toLowerCase());
 	}
 
-	private static String readFile(String name) throws URISyntaxException, IOException {
-		URL url = TFIDFIndexBuilderTest.class.getResource("TFIDFIndexBuilder/" + name + ".txt");
+	private static void loadStopwords() throws IOException, URISyntaxException {
+		URL url = CaseFormat.class.getResource("EnglishStopWords.txt");
 		Path path = Paths.get(url.toURI());
-		return new String(Files.readAllBytes(path));
+		String[] stopWords = new String(Files.readAllBytes(path)).split("\n+");
+		STOPWORDS.addAll(Arrays.asList(stopWords));
 	}
 }

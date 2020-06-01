@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero;
+package io.github.rohitawate.notehero.models;
 
-import io.github.rohitawate.notehero.database.PostgresPool;
-import io.javalin.Javalin;
+import java.util.UUID;
 
-import java.sql.SQLException;
+public class User {
+	private UUID id;
+	private String username;
+	private Tier tier;
 
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		PostgresPool.getConnection();
-		Javalin app = Javalin.create().start(8080);
-		app.get("/", ctx -> ctx.result("hello, world!"));
+	public User(String username, Tier tier) {
+		this.username = username;
+		this.tier = tier;
+	}
+
+	public User(UUID id, String username, Tier tier) {
+		this.id = id;
+		this.username = username;
+		this.tier = tier;
 	}
 }

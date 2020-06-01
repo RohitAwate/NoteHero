@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero;
+package io.github.rohitawate.notehero.database;
 
-import io.github.rohitawate.notehero.database.PostgresPool;
-import io.javalin.Javalin;
+public interface DataAccessor<T, PK> {
+	void create(T t);
 
-import java.sql.SQLException;
+	T read(PK pk);
 
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		PostgresPool.getConnection();
-		Javalin app = Javalin.create().start(8080);
-		app.get("/", ctx -> ctx.result("hello, world!"));
-	}
+	void update(T t);
+
+	T delete(PK pk);
 }

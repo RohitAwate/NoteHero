@@ -14,17 +14,29 @@
  * limitations under the License.
  */
 
-package io.github.rohitawate.notehero;
+package io.github.rohitawate.notehero.database;
 
-import io.github.rohitawate.notehero.database.PostgresPool;
-import io.javalin.Javalin;
+import io.github.rohitawate.notehero.models.User;
 
-import java.sql.SQLException;
+public class UserAccessor implements DataAccessor<User, String> {
 
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		PostgresPool.getConnection();
-		Javalin app = Javalin.create().start(8080);
-		app.get("/", ctx -> ctx.result("hello, world!"));
+	@Override
+	public void create(User user) {
+
+	}
+
+	@Override
+	public User read(String username) {
+		return null;
+	}
+
+	@Override
+	public void update(User user) {
+
+	}
+
+	@Override
+	public User delete(String username) {
+		return null;
 	}
 }

@@ -38,10 +38,20 @@ public class IngestionController {
 	}
 
 	public void ingestAll() {
+		/*
+			 Ingestion process:
+			 - render note
+			 - save rendered output to database
+			 - get note IDs to be used as document IDs
+			 - build search index
+			 - save search index
+		*/
+
 		Note[] notes = new Note[candidateFilePaths.size()];
 
 		for (int i = 0; i < candidateFilePaths.size(); i++) {
 			String currentPath = candidateFilePaths.get(i);
+
 			try {
 				notes[i] = processNote(readNoteFromDisk(currentPath), currentPath);
 			} catch (IOException e) {

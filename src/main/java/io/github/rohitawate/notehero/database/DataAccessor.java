@@ -16,12 +16,19 @@
 
 package io.github.rohitawate.notehero.database;
 
+import io.github.rohitawate.notehero.logging.Log;
+import io.github.rohitawate.notehero.logging.Logger;
+
+import java.util.Optional;
+
 public interface DataAccessor<T, PK> {
-	void create(T t);
+	boolean create(T t);
 
-	T read(PK pk);
+	Optional<T> read(PK pk);
 
-	void update(T t);
+	boolean update(PK pk, T t);
 
-	T delete(PK pk);
+	boolean delete(PK pk);
+
+	Logger logger = new Logger(Log.Level.WARNING);
 }

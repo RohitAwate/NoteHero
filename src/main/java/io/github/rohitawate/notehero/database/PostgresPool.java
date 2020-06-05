@@ -27,9 +27,24 @@ public class PostgresPool {
 	private static HikariDataSource dataSource;
 
 	static {
-		config.setJdbcUrl(System.getenv("POSTGRES_URL"));
-		config.setUsername(System.getenv("POSTGRES_USERNAME"));
-		config.setPassword(System.getenv("POSTGRES_PASSWORD"));
+		String pgURL = System.getenv("POSTGRES_URL");
+		if (pgURL == null) {
+			pgURL = "postgresql://localhost:5432/";
+		}
+
+		String pgUsername = System.getenv("POSTGRES_USER");
+		if (pgUsername == null) {
+			pgUsername = "";
+		}
+
+		String pgPassword = System.getenv("POSTGRES_PASSWORD");
+		if (pgPassword == null) {
+			pgPassword = "";
+		}
+
+		config.setJdbcUrl("jdbc:" + pgURL);
+		config.setUsername(pgUsername);
+		config.setPassword(pgPassword);
 		config.addDataSourceProperty("cachePrepStmts", "true");
 		config.addDataSourceProperty("prepStmtCacheSize", "250");
 		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

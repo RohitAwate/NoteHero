@@ -16,14 +16,10 @@
 
 package io.github.rohitawate.notehero;
 
-import io.github.rohitawate.notehero.database.PostgresPool;
 import io.javalin.Javalin;
 
-import java.sql.SQLException;
-
 public class Main {
-	public static void main(String[] args) throws SQLException {
-		PostgresPool.getConnection();
+	public static void main(String[] args) {
 		Javalin app = Javalin.create().start(8080);
 		app.get("/", ctx -> ctx.result("hello, world!"));
 	}

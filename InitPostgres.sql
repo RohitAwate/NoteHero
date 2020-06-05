@@ -9,7 +9,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS Users (
 	Username VARCHAR(30) NOT NULL,
 	Email VARCHAR(254) NOT NULL,
-	Password CHAR(64) NOT NULL,
+	Password CHAR(60) NOT NULL,
 	Tier UserTier NOT NULL,
 	PRIMARY KEY (Username)
 );

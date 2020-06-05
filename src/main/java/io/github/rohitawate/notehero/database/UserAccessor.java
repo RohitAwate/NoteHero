@@ -16,27 +16,132 @@
 
 package io.github.rohitawate.notehero.database;
 
+import io.github.rohitawate.notehero.models.Tier;
 import io.github.rohitawate.notehero.models.User;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Optional;
 
 public class UserAccessor implements DataAccessor<User, String> {
 
 	@Override
-	public void create(User user) {
+	public boolean create(User user) {
+		try {
+			Connection conn = PostgresPool.getConnection();
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO Users (Username, Email, Password, Tier) VALUES(?, ?, crypt(?, gen_salt('bf', 8)), CAST(? AS UserTier))");
+			statement.setString(1, user.getUsername());
+			statement.setString(2, user.getEmail());
+			statement.setString(3, user.getPassword());
+			statement.setString(4, user.getTier().toString());
+			return statement.executeUpdate() == 1;
+		} catch (SQLException e) {
+			logger.logError("Error while creating new user: ");
+			e.printStackTrace();
+		}
 
+		return false;
 	}
 
 	@Override
-	public User read(String username) {
-		return null;
+	public Optional<User> read(String username) {
+		try {
+			Connection conn = PostgresPool.getConnection();
+			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=?");
+			statement.setString(1, username);
+			ResultSet result = statement.executeQuery();
+
+			if (!result.next()) {
+				return Optional.empty();
+			}
+
+			User user = new User(
+					result.getString("Username"),
+					result.getString("Email"),
+					Tier.valueOf(result.getString("Tier"))
+			);
+
+			return Optional.of(user);
+		} catch (SQLException e) {
+			logger.logError("Error while reading user: ");
+			e.printStackTrace();
+		}
+
+		return Optional.empty();
+	}
+
+	public Optional<User> login(String username, String password) {
+		try {
+			Connection conn = PostgresPool.getConnection();
+			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=? AND Password=crypt(?, Password)");
+			statement.setString(1, username);
+			statement.setString(2, password);
+			ResultSet result = statement.executeQuery();
+
+			if (!result.next()) {
+				return Optional.empty();
+			}
+
+			User user = new User(
+					result.getString("Username"),
+					result.getString("Email"),
+					Tier.valueOf(result.getString("Tier"))
+			);
+
+			return Optional.of(user);
+		} catch (SQLException e) {
+			logger.logError("Error while logging in user: ");
+			e.printStackTrace();
+		}
+
+		return Optional.empty();
 	}
 
 	@Override
-	public void update(User user) {
+	public boolean update(String username, User user) {
+		try {
+			PreparedStatement statement;
+			Connection conn = PostgresPool.getConnection();
 
+			// Since a User object can be instantiated with/without a password
+			if (user.getPassword() == null) {
+				statement = conn.prepareStatement("UPDATE USERS SET Username=?, Email=?, Tier=CAST(? AS UserTier) WHERE Username=?");
+				statement.setString(1, user.getUsername());
+				statement.setString(2, user.getEmail());
+				statement.setString(3, user.getTier().toString());
+				statement.setString(4, username);
+			} else {
+				statement = conn.prepareStatement("UPDATE USERS SET Username=?, Email=?, Password=crypt(?, gen_salt('bf', 8)), Tier=CAST(? AS UserTier) WHERE Username=?");
+				statement.setString(1, user.getUsername());
+				statement.setString(2, user.getEmail());
+				statement.setString(3, user.getPassword());
+				statement.setString(4, user.getTier().toString());
+				statement.setString(5, username);
+			}
+
+			return statement.executeUpdate() == 1;
+		} catch (SQLException e) {
+			logger.logError("Error while updating user: ");
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	@Override
-	public User delete(String username) {
-		return null;
+	public boolean delete(String username) {
+		try {
+			Connection conn = PostgresPool.getConnection();
+			PreparedStatement statement = conn.prepareStatement("DELETE FROM Users WHERE Username=?");
+			statement.setString(1, username);
+			return statement.executeUpdate() == 1;
+		} catch (SQLException e) {
+			logger.logError("Error while deleting user: ");
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 }

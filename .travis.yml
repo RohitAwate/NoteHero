@@ -2,4 +2,11 @@ dist: bionic
 language: java
 jdk: openjdk11
 
+env:
+  - POSTGRES_USER=postgres
+
+services: postgresql
+
+before_script: psql -f InitPostgres.sql -U postgres
+
 script: mvn clean test

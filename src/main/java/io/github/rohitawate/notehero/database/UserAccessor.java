@@ -29,6 +29,11 @@ public class UserAccessor implements DataAccessor<User, String> {
 
 	@Override
 	public boolean create(User user) {
+		// User can be instantiated without a password
+		if (user.getPassword() == null) {
+			return false;
+		}
+
 		try {
 			Connection conn = PostgresPool.getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Users (Username, Email, Password, Tier) VALUES(?, ?, crypt(?, gen_salt('bf', 8)), CAST(? AS UserTier))");

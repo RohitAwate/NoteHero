@@ -19,7 +19,7 @@ package io.github.rohitawate.notehero.models;
 import java.util.Objects;
 import java.util.UUID;
 
-public class GitRepository {
+public class GitRepo {
 
 	public enum GitHost {
 		GITHUB, GITLAB, BITBUCKET
@@ -33,7 +33,7 @@ public class GitRepository {
 	private final String branch;
 	private final UUID latestBuild;
 
-	public GitRepository(UUID repoID, String username, GitHost gitHost, String hostUsername, String repoName, String branch, UUID latestBuild) {
+	public GitRepo(UUID repoID, String username, GitHost gitHost, String hostUsername, String repoName, String branch, UUID latestBuild) {
 		this.repoID = repoID;
 		this.username = username;
 		this.gitHost = gitHost;
@@ -43,7 +43,7 @@ public class GitRepository {
 		this.latestBuild = latestBuild;
 	}
 
-	public GitRepository(String username, GitHost gitHost, String hostUsername, String repoName, String branch, UUID latestBuild) {
+	public GitRepo(String username, GitHost gitHost, String hostUsername, String repoName, String branch, UUID latestBuild) {
 		this.repoID = UUID.randomUUID();
 		this.username = username;
 		this.gitHost = gitHost;
@@ -85,7 +85,7 @@ public class GitRepository {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		GitRepository that = (GitRepository) o;
+		GitRepo that = (GitRepo) o;
 		return Objects.equals(repoID, that.repoID) &&
 				Objects.equals(username, that.username) &&
 				gitHost == that.gitHost &&

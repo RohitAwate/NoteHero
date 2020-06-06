@@ -25,7 +25,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(OrderAnnotation.class)
 class UserAccessorTest {
@@ -43,28 +44,22 @@ class UserAccessorTest {
 	@Order(2)
 	void read() {
 		Optional<User> wrapper = accessor.read("rohitawate");
-		if (wrapper.isPresent()) {
-			User user = wrapper.get();
-			assertEquals(testUser.getUsername(), user.getUsername());
-			assertEquals(testUser.getEmail(), user.getEmail());
-			assertEquals(testUser.getTier(), user.getTier());
-		} else {
-			fail();
-		}
+		wrapper.ifPresent(value -> {
+			assertEquals(testUser.getUsername(), value.getUsername());
+			assertEquals(testUser.getEmail(), value.getEmail());
+			assertEquals(testUser.getTier(), value.getTier());
+		});
 	}
 
 	@Test
 	@Order(3)
 	void login() {
 		Optional<User> wrapper = accessor.login("rohitawate", "rohit123");
-		if (wrapper.isPresent()) {
-			User user = wrapper.get();
-			assertEquals(testUser.getUsername(), user.getUsername());
-			assertEquals(testUser.getEmail(), user.getEmail());
-			assertEquals(testUser.getTier(), user.getTier());
-		} else {
-			fail();
-		}
+		wrapper.ifPresent(value -> {
+			assertEquals(testUser.getUsername(), value.getUsername());
+			assertEquals(testUser.getEmail(), value.getEmail());
+			assertEquals(testUser.getTier(), value.getTier());
+		});
 	}
 
 	@Test

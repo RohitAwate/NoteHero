@@ -20,7 +20,7 @@ EXCEPTION
 	WHEN duplicate_object THEN null;
 END $$;
 
-CREATE TABLE IF NOT EXISTS GitRepositories (
+CREATE TABLE IF NOT EXISTS GitRepos (
 	RepoID UUID DEFAULT gen_random_uuid(),
 	Username VARCHAR(30) NOT NULL,
 	GitHost GitHost NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Builds (
 	StartTime TIME WITH TIME ZONE NOT NULL,
 	Status BuildStatus NOT NULL,
 	PRIMARY KEY (BuildID),
-	FOREIGN KEY (RepoID) REFERENCES GitRepositories (RepoID)
+	FOREIGN KEY (RepoID) REFERENCES GitRepos (RepoID)
 );
 
 CREATE TABLE IF NOT EXISTS Notes (
@@ -59,5 +59,5 @@ CREATE TABLE IF NOT EXISTS Notes (
 	Slug TEXT NOT NULL,
 	Categories VARCHAR[],
 	PRIMARY KEY (NoteID),
-	FOREIGN KEY (RepoID) REFERENCES GitRepositories (RepoID)
+	FOREIGN KEY (RepoID) REFERENCES GitRepos (RepoID)
 );

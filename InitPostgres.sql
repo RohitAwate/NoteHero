@@ -15,20 +15,20 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 DO $$ BEGIN
-	CREATE TYPE GitHost AS ENUM ('GH', 'GL', 'BB');
+	CREATE TYPE GitHost AS ENUM ('GITHUB', 'GITLAB', 'BITBUCKET');
 EXCEPTION
 	WHEN duplicate_object THEN null;
 END $$;
 
-CREATE TABLE IF NOT EXISTS Buckets (
-	BucketID UUID DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS GitRepositories (
+	RepoID UUID DEFAULT gen_random_uuid(),
 	Username VARCHAR(30) NOT NULL,
 	GitHost GitHost NOT NULL,
 	HostUsername VARCHAR NOT NULL,
 	RepoName VARCHAR NOT NULL,
 	Branch VARCHAR NOT NULL,
 	LatestBuildID UUID,
-	PRIMARY KEY (BucketID),
+	PRIMARY KEY (RepoID),
 	FOREIGN KEY (Username) REFERENCES Users (Username)
 );
 
@@ -40,18 +40,18 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS Builds (
 	BuildID UUID DEFAULT gen_random_uuid(),
-	BucketID UUID NOT NULL,
+	RepoID UUID NOT NULL,
 	GitBranch VARCHAR NOT NULL,
 	CommitHash CHAR(40) NOT NULL,
 	StartTime TIME WITH TIME ZONE NOT NULL,
 	Status BuildStatus NOT NULL,
 	PRIMARY KEY (BuildID),
-	FOREIGN KEY (BucketID) REFERENCES Buckets (BucketID)
+	FOREIGN KEY (RepoID) REFERENCES GitRepositories (RepoID)
 );
 
 CREATE TABLE IF NOT EXISTS Notes (
 	NoteID UUID DEFAULT gen_random_uuid(),
-	BucketID UUID NOT NULL,
+	RepoID UUID NOT NULL,
 	HTML TEXT NOT NULL,
 	Markdown TEXT NOT NULL,
 	Title TEXT NOT NULL,
@@ -59,5 +59,5 @@ CREATE TABLE IF NOT EXISTS Notes (
 	Slug TEXT NOT NULL,
 	Categories VARCHAR[],
 	PRIMARY KEY (NoteID),
-	FOREIGN KEY (BucketID) REFERENCES Buckets (BucketID)
+	FOREIGN KEY (RepoID) REFERENCES GitRepositories (RepoID)
 );

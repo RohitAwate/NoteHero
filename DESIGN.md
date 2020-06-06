@@ -299,7 +299,7 @@ notes/
             "username": "rohit",
             "tier": "free/premium/ultimate"
         },
-        "repoHost": "gh/gl/bb",
+        "gitHost": "gh/gl/bb",
         "repoName": "myNotes",
         "commitHash": "ee634c967f051f83e1822334d6fb7df03a2276c7"
     },

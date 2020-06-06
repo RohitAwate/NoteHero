@@ -34,8 +34,10 @@ public class UserAccessor implements DataAccessor<User, String> {
 			return false;
 		}
 
+		Connection conn = null;
+
 		try {
-			Connection conn = PostgresPool.getConnection();
+			conn = PostgresPool.getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Users (Username, Email, Password, Tier) VALUES(?, ?, crypt(?, gen_salt('bf', 8)), CAST(? AS UserTier))");
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getEmail());
@@ -45,6 +47,8 @@ public class UserAccessor implements DataAccessor<User, String> {
 		} catch (SQLException e) {
 			logger.logError("Error while creating new user: ");
 			e.printStackTrace();
+		} finally {
+			PostgresPool.returnConnection(conn);
 		}
 
 		return false;
@@ -52,8 +56,10 @@ public class UserAccessor implements DataAccessor<User, String> {
 
 	@Override
 	public Optional<User> read(String username) {
+		Connection conn = null;
+
 		try {
-			Connection conn = PostgresPool.getConnection();
+			conn = PostgresPool.getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=?");
 			statement.setString(1, username);
 			ResultSet result = statement.executeQuery();
@@ -72,14 +78,18 @@ public class UserAccessor implements DataAccessor<User, String> {
 		} catch (SQLException e) {
 			logger.logError("Error while reading user: ");
 			e.printStackTrace();
+		} finally {
+			PostgresPool.returnConnection(conn);
 		}
 
 		return Optional.empty();
 	}
 
 	public Optional<User> login(String username, String password) {
+		Connection conn = null;
+
 		try {
-			Connection conn = PostgresPool.getConnection();
+			conn = PostgresPool.getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=? AND Password=crypt(?, Password)");
 			statement.setString(1, username);
 			statement.setString(2, password);
@@ -99,6 +109,8 @@ public class UserAccessor implements DataAccessor<User, String> {
 		} catch (SQLException e) {
 			logger.logError("Error while logging in user: ");
 			e.printStackTrace();
+		} finally {
+			PostgresPool.returnConnection(conn);
 		}
 
 		return Optional.empty();
@@ -106,9 +118,11 @@ public class UserAccessor implements DataAccessor<User, String> {
 
 	@Override
 	public boolean update(String username, User user) {
+		Connection conn = null;
+
 		try {
+			conn = PostgresPool.getConnection();
 			PreparedStatement statement;
-			Connection conn = PostgresPool.getConnection();
 
 			// Since a User object can be instantiated with/without a password
 			if (user.getPassword() == null) {
@@ -130,6 +144,8 @@ public class UserAccessor implements DataAccessor<User, String> {
 		} catch (SQLException e) {
 			logger.logError("Error while updating user: ");
 			e.printStackTrace();
+		} finally {
+			PostgresPool.returnConnection(conn);
 		}
 
 		return false;
@@ -137,14 +153,18 @@ public class UserAccessor implements DataAccessor<User, String> {
 
 	@Override
 	public boolean delete(String username) {
+		Connection conn = null;
+
 		try {
-			Connection conn = PostgresPool.getConnection();
+			conn = PostgresPool.getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Users WHERE Username=?");
 			statement.setString(1, username);
 			return statement.executeUpdate() == 1;
 		} catch (SQLException e) {
 			logger.logError("Error while deleting user: ");
 			e.printStackTrace();
+		} finally {
+			PostgresPool.returnConnection(conn);
 		}
 
 		return false;

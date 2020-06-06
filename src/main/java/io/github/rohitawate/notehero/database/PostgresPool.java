@@ -18,11 +18,15 @@ package io.github.rohitawate.notehero.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.rohitawate.notehero.logging.Log;
+import io.github.rohitawate.notehero.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class PostgresPool {
+	private static Logger logger = new Logger(Log.Level.WARNING);
+
 	private static HikariConfig config = new HikariConfig();
 	private static HikariDataSource dataSource;
 
@@ -53,5 +57,20 @@ public class PostgresPool {
 
 	public static Connection getConnection() throws SQLException {
 		return dataSource.getConnection();
+	}
+
+	public static void returnConnection(Connection conn) {
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				logger.logError("Error while returning connection to Hikari: ");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void close() {
+		dataSource.close();
 	}
 }

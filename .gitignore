@@ -30,3 +30,4 @@ target/
 
 # Build
 NoteHero.iml
+docker_pg_init.sh

@@ -65,7 +65,7 @@ class UserAccessorTest {
 	@Test
 	@Order(4)
 	void update() {
-		User updatedUserWithPassword = new User("jonsnow", "jon@mailinator.com", "dany", Tier.PREMIUM);
+		User updatedUserWithPassword = new User("jonsnow", "jon@mailinator.com", "dany", Tier.ULTIMATE);
 		assertTrue(accessor.update("rohitawate", updatedUserWithPassword));
 
 		User updatedUserWithoutPassword = new User("batman", "bruce@wayne.com", Tier.ULTIMATE);

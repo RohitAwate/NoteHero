@@ -63,7 +63,6 @@ public class GitRepoAccessor implements DataAccessor<GitRepo, UUID> {
 				return Optional.empty();
 			}
 
-			//UUID repoID, String username, GitHost gitHost, String hostUsername, String repoName, String branch, UUID latestBuild)
 			GitRepo repo = new GitRepo(
 					result.getObject("RepoID", UUID.class),
 					result.getString("Username"),

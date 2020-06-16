@@ -18,16 +18,16 @@ package io.github.rohitawate.notehero.models;
 
 public enum Tier {
 	/*
-		┌──────────────────┬─────────────────────────────────────┬────────────────────────────┐
-		│       FREE       │               PREMIUM               │          ULTIMATE          │
-		├──────────────────┼─────────────────────────────────────┼────────────────────────────┤
-		│ $0/forever       │ $2/month                            │ $4/month                   │
-		│ Sequential build │ Parallel build                      │ Parallel build             │
-		│ 1 Git repository │ 5 Git repositories                  │ Unlimited Git repositories │
-		│ Public notes     │ Private notes                       │ Private notes              │
-		│ No history       │ History: Head commits during builds │ History: All commits       │
-		└──────────────────┴─────────────────────────────────────┴────────────────────────────┘
+		┌───────────────────────────┬───────────────────────────┐
+		│           FREE            │         ULTIMATE          │
+		├───────────────────────────┼───────────────────────────┤
+		│ $0/forever                │ $2/month                  │
+		│ Sequential build          │ Parallel build            │
+		│ 1 Git repository          │ Up to 10 Git repositories │
+		│ Public notes only         │ Public + Private notes    │
+		│ Only latest build visible │ Full build history        │
+		└───────────────────────────┴───────────────────────────┘
 	 */
 
-	FREE, PREMIUM, ULTIMATE
+	FREE, ULTIMATE
 }

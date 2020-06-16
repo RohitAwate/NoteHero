@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 DO $$ BEGIN
-	CREATE TYPE UserTier AS ENUM ('FREE', 'PREMIUM', 'ULTIMATE');
+	CREATE TYPE UserTier AS ENUM ('FREE', 'ULTIMATE');
 EXCEPTION
 	WHEN duplicate_object THEN null;
 END $$;
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS GitRepos (
 );
 
 DO $$ BEGIN
-	CREATE TYPE BuildStatus AS ENUM ('Success', 'Failed', 'Timed Out', 'Runtime Error');
+	CREATE TYPE BuildStatus AS ENUM ('SUCCESS', 'FAILED', 'TIMED_OUT', 'RUNTIME_ERROR');
 EXCEPTION
 	WHEN duplicate_object THEN null;
 END $$;

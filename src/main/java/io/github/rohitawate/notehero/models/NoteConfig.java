@@ -56,6 +56,13 @@ public class NoteConfig {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = Objects.hash(title, slug, sudo);
+		result = 31 * result + Arrays.hashCode(categories);
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;

@@ -16,23 +16,60 @@
 
 package io.github.rohitawate.notehero.models;
 
+import java.util.Objects;
+import java.util.UUID;
+
 /**
  * A Note object contains the rendered
  * note and its configuration.
  */
 public class Note {
-	public final String renderedNote;
+	public final UUID noteID;
+	public final UUID repoID;
+	public final String markdown;
+	public final String html;
 	public final NoteConfig config;
 
-	public Note(String renderedNote, NoteConfig config) {
-		this.renderedNote = renderedNote;
+	public Note(UUID repoID, String markdown, String html, NoteConfig config) {
+		this.noteID = UUID.randomUUID();
+		this.repoID = repoID;
+		this.markdown = markdown;
+		this.html = html;
 		this.config = config;
+	}
+
+	public Note(UUID noteID, UUID repoID, String markdown, String html, NoteConfig config) {
+		this.noteID = noteID;
+		this.repoID = repoID;
+		this.markdown = markdown;
+		this.html = html;
+		this.config = config;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Note note = (Note) o;
+		return Objects.equals(noteID, note.noteID) &&
+				Objects.equals(repoID, note.repoID) &&
+				Objects.equals(markdown, note.markdown) &&
+				Objects.equals(html, note.html) &&
+				Objects.equals(config, note.config);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(noteID, repoID, markdown, html, config);
 	}
 
 	@Override
 	public String toString() {
 		return "Note{" +
-				"renderedNote='" + renderedNote + '\'' +
+				"noteID=" + noteID +
+				", repoID=" + repoID +
+				", markdown='" + markdown + '\'' +
+				", html='" + html + '\'' +
 				", config=" + config +
 				'}';
 	}

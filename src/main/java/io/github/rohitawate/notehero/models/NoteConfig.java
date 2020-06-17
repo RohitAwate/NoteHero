@@ -29,10 +29,10 @@ import java.util.Objects;
  * that may be used to affect the build process.
  */
 public class NoteConfig {
-	final String title;
-	final String[] categories;
-	final String slug;
-	final boolean sudo;
+	public final String title;
+	public final String[] categories;
+	public final String slug;
+	public final boolean sudo;
 
 	@JsonCreator
 	public NoteConfig(@JsonProperty("title") String title,

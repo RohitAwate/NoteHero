@@ -25,22 +25,22 @@ import java.util.UUID;
  */
 public class Note {
 	public final UUID noteID;
-	public final UUID repoID;
+	public final UUID buildID;
 	public final String markdown;
 	public final String html;
 	public final NoteConfig config;
 
-	public Note(UUID repoID, String markdown, String html, NoteConfig config) {
+	public Note(UUID buildID, String markdown, String html, NoteConfig config) {
 		this.noteID = UUID.randomUUID();
-		this.repoID = repoID;
+		this.buildID = buildID;
 		this.markdown = markdown;
 		this.html = html;
 		this.config = config;
 	}
 
-	public Note(UUID noteID, UUID repoID, String markdown, String html, NoteConfig config) {
+	public Note(UUID noteID, UUID buildID, String markdown, String html, NoteConfig config) {
 		this.noteID = noteID;
-		this.repoID = repoID;
+		this.buildID = buildID;
 		this.markdown = markdown;
 		this.html = html;
 		this.config = config;
@@ -52,7 +52,7 @@ public class Note {
 		if (o == null || getClass() != o.getClass()) return false;
 		Note note = (Note) o;
 		return Objects.equals(noteID, note.noteID) &&
-				Objects.equals(repoID, note.repoID) &&
+				Objects.equals(buildID, note.buildID) &&
 				Objects.equals(markdown, note.markdown) &&
 				Objects.equals(html, note.html) &&
 				Objects.equals(config, note.config);
@@ -60,14 +60,14 @@ public class Note {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(noteID, repoID, markdown, html, config);
+		return Objects.hash(noteID, buildID, markdown, html, config);
 	}
 
 	@Override
 	public String toString() {
 		return "Note{" +
 				"noteID=" + noteID +
-				", repoID=" + repoID +
+				", repoID=" + buildID +
 				", markdown='" + markdown + '\'' +
 				", html='" + html + '\'' +
 				", config=" + config +

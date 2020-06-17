@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 public class IngestionController {
 	final Logger logger = new Logger(Log.Level.WARNING);
@@ -68,7 +69,8 @@ public class IngestionController {
 			return null;
 		}
 
-		return new Note(renderer.render(), renderer.getConfig());
+		// TODO: Replace with actual values
+		return new Note(UUID.randomUUID(), noteSource, renderer.render(), renderer.getConfig());
 	}
 
 	private String readNoteFromDisk(String filePath) throws IOException {

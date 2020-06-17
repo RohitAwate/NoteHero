@@ -24,8 +24,7 @@ import org.junit.jupiter.api.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GitRepoAccessorTest {
@@ -52,7 +51,8 @@ class GitRepoAccessorTest {
 	@Order(2)
 	void read() {
 		Optional<GitRepo> repoWrapper = REPO_ACCESSOR.read(TEST_REPO.getRepoID());
-		repoWrapper.ifPresent(gitRepo -> assertEquals(TEST_REPO, gitRepo));
+		if (repoWrapper.isPresent()) assertEquals(TEST_REPO, repoWrapper.get());
+		else fail();
 	}
 
 	@Test

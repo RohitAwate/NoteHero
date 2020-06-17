@@ -17,6 +17,7 @@
 package io.github.rohitawate.notehero.models;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,16 +31,25 @@ public class Build {
 	private final UUID repoID;
 	private final String branch;
 	private final String commitHash;
-	private final OffsetDateTime dateTime;
-	private final BuildStatus buildStatus;
+	private OffsetDateTime startTime;
+	private final BuildStatus status;
 
-	public Build(UUID buildID, UUID repoID, String branch, String commitHash, OffsetDateTime dateTime, BuildStatus buildStatus) {
+	public Build(UUID repoID, String branch, String commitHash, OffsetDateTime startTime, BuildStatus status) {
+		this.buildID = UUID.randomUUID();
+		this.repoID = repoID;
+		this.branch = branch;
+		this.commitHash = commitHash;
+		this.startTime = startTime.withOffsetSameInstant(ZoneOffset.UTC);
+		this.status = status;
+	}
+
+	public Build(UUID buildID, UUID repoID, String branch, String commitHash, OffsetDateTime startTime, BuildStatus status) {
 		this.buildID = buildID;
 		this.repoID = repoID;
 		this.branch = branch;
 		this.commitHash = commitHash;
-		this.dateTime = dateTime;
-		this.buildStatus = buildStatus;
+		this.startTime = startTime.withOffsetSameInstant(ZoneOffset.UTC);
+		this.status = status;
 	}
 
 	public UUID getBuildID() {
@@ -58,12 +68,12 @@ public class Build {
 		return commitHash;
 	}
 
-	public OffsetDateTime getDateTime() {
-		return dateTime;
+	public OffsetDateTime getStartTime() {
+		return startTime;
 	}
 
-	public BuildStatus getBuildStatus() {
-		return buildStatus;
+	public BuildStatus getStatus() {
+		return status;
 	}
 
 	@Override
@@ -75,13 +85,13 @@ public class Build {
 				Objects.equals(repoID, build.repoID) &&
 				Objects.equals(branch, build.branch) &&
 				Objects.equals(commitHash, build.commitHash) &&
-				Objects.equals(dateTime, build.dateTime) &&
-				buildStatus == build.buildStatus;
+				Objects.equals(startTime, build.startTime) &&
+				status == build.status;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(buildID, repoID, branch, commitHash, dateTime, buildStatus);
+		return Objects.hash(buildID, repoID, branch, commitHash, startTime, status);
 	}
 
 	@Override
@@ -91,8 +101,8 @@ public class Build {
 				", repoID=" + repoID +
 				", branch='" + branch + '\'' +
 				", commitHash='" + commitHash + '\'' +
-				", dateTime=" + dateTime +
-				", buildStatus=" + buildStatus +
+				", dateTime=" + startTime +
+				", buildStatus=" + status +
 				'}';
 	}
 }

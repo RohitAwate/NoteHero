@@ -61,6 +61,14 @@ class GitRepoAccessorTest {
 		GitRepo updatedRepo = new GitRepo(TEST_USER.getUsername(), GitRepo.GitHost.BITBUCKET, "JonSnow",
 				"Everest", "feature-x", UUID.randomUUID());
 		assertTrue(REPO_ACCESSOR.update(TEST_REPO.getRepoID(), updatedRepo));
+
+		Optional<GitRepo> repoWrapper = REPO_ACCESSOR.read(TEST_REPO.getRepoID());
+		if (repoWrapper.isPresent()) {
+			GitRepo repo = repoWrapper.get();
+			// Checking the repo attributes that should not be updated
+			assertEquals(TEST_REPO.getRepoID(), repo.getRepoID());
+			assertEquals(TEST_REPO.getUsername(), repo.getUsername());
+		} else fail();
 	}
 
 	@Test

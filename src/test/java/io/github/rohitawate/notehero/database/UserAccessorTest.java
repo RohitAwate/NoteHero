@@ -71,8 +71,26 @@ class UserAccessorTest {
 		User updatedUserWithPassword = new User("jonsnow", "jon@mailinator.com", "dany", Tier.ULTIMATE);
 		assertTrue(accessor.update("rohitawate", updatedUserWithPassword));
 
+		Optional<User> userWrapper = accessor.read(updatedUserWithPassword.getUsername());
+		if (userWrapper.isPresent()) {
+			User user = userWrapper.get();
+			// Checking the user attributes that can be updated
+			assertEquals(updatedUserWithPassword.getUsername(), user.getUsername());
+			assertEquals(updatedUserWithPassword.getEmail(), user.getEmail());
+			assertEquals(updatedUserWithPassword.getTier(), user.getTier());
+		} else fail();
+
 		User updatedUserWithoutPassword = new User("batman", "bruce@wayne.com", Tier.ULTIMATE);
 		assertTrue(accessor.update("jonsnow", updatedUserWithoutPassword));
+
+		userWrapper = accessor.read(updatedUserWithoutPassword.getUsername());
+		if (userWrapper.isPresent()) {
+			User user = userWrapper.get();
+			// Checking the user attributes that can be updated
+			assertEquals(updatedUserWithoutPassword.getUsername(), user.getUsername());
+			assertEquals(updatedUserWithoutPassword.getEmail(), user.getEmail());
+			assertEquals(updatedUserWithoutPassword.getTier(), user.getTier());
+		} else fail();
 	}
 
 	@Test

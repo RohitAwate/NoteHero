@@ -49,6 +49,7 @@ class UserAccessorTest {
 			assertEquals(testUser.getUsername(), user.getUsername());
 			assertEquals(testUser.getEmail(), user.getEmail());
 			assertEquals(testUser.getTier(), user.getTier());
+			assertNull(user.getPassword());
 		} else fail();
 	}
 

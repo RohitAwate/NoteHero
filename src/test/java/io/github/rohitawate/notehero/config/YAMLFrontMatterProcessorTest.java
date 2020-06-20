@@ -52,7 +52,7 @@ class YAMLFrontMatterProcessorTest {
 		candidateFilePaths.add("SingleDelim.xml");
 		candidateFilePaths.add("BothDelim.xml");
 
-		controller = new IngestionController(candidateFilePaths);
+		controller = new IngestionController(build, candidateFilePaths);
 	}
 
 	@Test

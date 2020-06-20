@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class UserAccessor implements DataAccessor<User, String> {
+public class UserAccessor extends TransactionalDataAccessor<User, String> {
 
 	@Override
 	public boolean create(User user) {
@@ -37,7 +37,7 @@ public class UserAccessor implements DataAccessor<User, String> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Users (Username, Email, Password, Tier) VALUES(?, ?, crypt(?, gen_salt('bf', 8)), CAST(? AS UserTier))");
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getEmail());
@@ -59,7 +59,7 @@ public class UserAccessor implements DataAccessor<User, String> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=?");
 			statement.setString(1, username);
 			ResultSet result = statement.executeQuery();
@@ -89,7 +89,7 @@ public class UserAccessor implements DataAccessor<User, String> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT Username, Email, Tier FROM Users WHERE Username=? AND Password=crypt(?, Password)");
 			statement.setString(1, username);
 			statement.setString(2, password);
@@ -121,7 +121,7 @@ public class UserAccessor implements DataAccessor<User, String> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement;
 
 			// Since a User object can be instantiated with/without a password
@@ -156,7 +156,7 @@ public class UserAccessor implements DataAccessor<User, String> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Users WHERE Username=?");
 			statement.setString(1, username);
 			return statement.executeUpdate() == 1;

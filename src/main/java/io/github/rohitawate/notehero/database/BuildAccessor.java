@@ -23,13 +23,13 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BuildAccessor implements DataAccessor<Build, UUID> {
+public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 	@Override
 	public boolean create(Build build) {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Builds (BuildID, RepoID, GitBranch, CommitHash, Committer, StartTime, Status) VALUES(?, ?, ?, ?, ?, ?, CAST(? AS BuildStatus))");
 			statement.setObject(1, build.getBuildID(), Types.OTHER);
@@ -55,7 +55,7 @@ public class BuildAccessor implements DataAccessor<Build, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM Builds WHERE BuildID=?");
 			statement.setObject(1, buildID, Types.OTHER);
 			ResultSet result = statement.executeQuery();
@@ -90,7 +90,7 @@ public class BuildAccessor implements DataAccessor<Build, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement;
 
 			statement = conn.prepareStatement("UPDATE Builds SET StartTime=?, Status=CAST(? AS BuildStatus) WHERE BuildID=?");
@@ -114,7 +114,7 @@ public class BuildAccessor implements DataAccessor<Build, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Builds WHERE BuildID=?");
 			statement.setObject(1, buildID, Types.OTHER);
 			return statement.executeUpdate() == 1;

@@ -37,7 +37,7 @@ class NoteAccessorTest {
 			"Nobita", "BambooCopter", "main", UUID.randomUUID());
 	private static final Build TEST_BUILD = new Build(TEST_REPO.getRepoID(), TEST_REPO.getBranch(),
 			"cc7efb1dfabc2eab67e052d76f54c304e81b28c4", "KhalDrogo", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
-	private static final NoteConfig TEST_NOTE_CONFIG = new NoteConfig("Test Note", new String[]{"random", "test"}, "/random/test", true);
+	private static final NoteConfig TEST_NOTE_CONFIG = new NoteConfig("Test Note", new String[]{"random", "test"}, "test-nh-note", true);
 	private static final Note TEST_NOTE = new Note(TEST_BUILD.getBuildID(), "**bold**", "<strong>bold</strong>", TEST_NOTE_CONFIG);
 
 	@BeforeAll
@@ -64,7 +64,7 @@ class NoteAccessorTest {
 	@Test
 	@Order(3)
 	void update() {
-		NoteConfig updatedNoteConfig = new NoteConfig("Updated Note", new String[]{"new", "updated"}, "/random/updated/note", false);
+		NoteConfig updatedNoteConfig = new NoteConfig("Updated Note", new String[]{"new", "updated"}, "my-amazing-note", false);
 		Note updatedNote = new Note(UUID.randomUUID(), UUID.randomUUID(), "*italic*", "<em>italic</em>", updatedNoteConfig);
 
 		assertTrue(NOTE_ACCESSOR.update(TEST_NOTE.noteID, updatedNote));

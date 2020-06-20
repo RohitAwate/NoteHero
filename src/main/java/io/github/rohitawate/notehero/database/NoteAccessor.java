@@ -23,13 +23,13 @@ import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
 
-public class NoteAccessor implements DataAccessor<Note, UUID> {
+public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 	@Override
 	public boolean create(Note note) {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Notes (NoteID, BuildID, HTML, Markdown, Title, Private, Slug, Categories) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 			statement.setObject(1, note.noteID, Types.OTHER);
@@ -56,7 +56,7 @@ public class NoteAccessor implements DataAccessor<Note, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM Notes WHERE NoteID=?");
 			statement.setObject(1, noteID, Types.OTHER);
 			ResultSet result = statement.executeQuery();
@@ -94,7 +94,7 @@ public class NoteAccessor implements DataAccessor<Note, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement;
 
 			statement = conn.prepareStatement("UPDATE Notes SET Title=?, Private=?, Categories=? WHERE NoteID=?");
@@ -119,7 +119,7 @@ public class NoteAccessor implements DataAccessor<Note, UUID> {
 		Connection conn = null;
 
 		try {
-			conn = PostgresPool.getConnection();
+			conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Notes WHERE NoteID=?");
 			statement.setObject(1, noteID, Types.OTHER);
 			return statement.executeUpdate() == 1;

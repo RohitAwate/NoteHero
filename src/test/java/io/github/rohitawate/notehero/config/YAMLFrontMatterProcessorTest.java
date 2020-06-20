@@ -18,8 +18,12 @@ package io.github.rohitawate.notehero.config;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import io.github.rohitawate.notehero.database.BuildAccessor;
+import io.github.rohitawate.notehero.database.GitRepoAccessor;
+import io.github.rohitawate.notehero.database.UserAccessor;
 import io.github.rohitawate.notehero.ingestion.IngestionController;
-import io.github.rohitawate.notehero.models.NoteConfig;
+import io.github.rohitawate.notehero.models.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,16 +33,31 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YAMLFrontMatterProcessorTest {
 	private static IngestionController controller;
 
+	private static final UserAccessor USER_ACCESSOR = new UserAccessor();
+	private static final GitRepoAccessor REPO_ACCESSOR = new GitRepoAccessor();
+
+	private static final User TEST_USER = new User("yfmtest", "yfmtest@test.com", "pass123", Tier.FREE);
+	private static final GitRepo TEST_REPO = new GitRepo(TEST_USER.getUsername(), GitRepo.GitHost.GITLAB,
+			"Chandler", "Everest", "main", UUID.randomUUID());
+	private static final Build TEST_BUILD = new Build(TEST_REPO.getRepoID(), "main",
+			"cab3b4d254bfafa74f0641b05761882921e5b435", "JonSnow", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
+
 	@BeforeAll
 	static void setupController() {
+		USER_ACCESSOR.create(TEST_USER);
+		REPO_ACCESSOR.create(TEST_REPO);
+
 		List<String> candidateFilePaths = new ArrayList<>();
 
 		candidateFilePaths.add("Positive.xml");
@@ -52,7 +71,7 @@ class YAMLFrontMatterProcessorTest {
 		candidateFilePaths.add("SingleDelim.xml");
 		candidateFilePaths.add("BothDelim.xml");
 
-		controller = new IngestionController(build, candidateFilePaths);
+		controller = new IngestionController(TEST_BUILD, candidateFilePaths);
 	}
 
 	@Test
@@ -165,4 +184,10 @@ class YAMLFrontMatterProcessorTest {
 		private NoteConfig expectedConfig;
 	}
 
+	@AfterAll
+	static void cleanup() {
+		new BuildAccessor().delete(TEST_BUILD.getBuildID());
+		assertTrue(REPO_ACCESSOR.delete(TEST_REPO.getRepoID()));
+		assertTrue(USER_ACCESSOR.delete(TEST_USER.getUsername()));
+	}
 }

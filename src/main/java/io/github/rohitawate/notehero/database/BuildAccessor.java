@@ -31,13 +31,14 @@ public class BuildAccessor implements DataAccessor<Build, UUID> {
 		try {
 			conn = PostgresPool.getConnection();
 
-			PreparedStatement statement = conn.prepareStatement("INSERT INTO Builds (BuildID, RepoID, GitBranch, CommitHash, StartTime, Status) VALUES(?, ?, ?, ?, ?, CAST(? AS BuildStatus))");
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO Builds (BuildID, RepoID, GitBranch, CommitHash, Committer, StartTime, Status) VALUES(?, ?, ?, ?, ?, ?, CAST(? AS BuildStatus))");
 			statement.setObject(1, build.getBuildID(), Types.OTHER);
 			statement.setObject(2, build.getRepoID(), Types.OTHER);
 			statement.setString(3, build.getBranch());
 			statement.setString(4, build.getCommitHash());
-			statement.setObject(5, build.getStartTime());
-			statement.setString(6, build.getStatus().toString());
+			statement.setString(5, build.getCommitter());
+			statement.setObject(6, build.getStartTime());
+			statement.setString(7, build.getStatus().toString());
 			return statement.executeUpdate() == 1;
 		} catch (SQLException e) {
 			logger.logError("Error while creating new build: ");
@@ -68,6 +69,7 @@ public class BuildAccessor implements DataAccessor<Build, UUID> {
 					result.getObject("RepoID", UUID.class),
 					result.getString("GitBranch"),
 					result.getString("CommitHash"),
+					result.getString("Committer"),
 					result.getObject("StartTime", OffsetDateTime.class),
 					Build.BuildStatus.valueOf(result.getString("Status"))
 			);

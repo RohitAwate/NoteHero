@@ -36,7 +36,7 @@ class NoteAccessorTest {
 	private static final GitRepo TEST_REPO = new GitRepo(TEST_USER.getUsername(), GitRepo.GitHost.GITLAB,
 			"Nobita", "BambooCopter", "main", UUID.randomUUID());
 	private static final Build TEST_BUILD = new Build(TEST_REPO.getRepoID(), TEST_REPO.getBranch(),
-			"cc7efb1dfabc2eab67e052d76f54c304e81b28c4", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
+			"cc7efb1dfabc2eab67e052d76f54c304e81b28c4", "KhalDrogo", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
 	private static final NoteConfig TEST_NOTE_CONFIG = new NoteConfig("Test Note", new String[]{"random", "test"}, "/random/test", true);
 	private static final Note TEST_NOTE = new Note(TEST_BUILD.getBuildID(), "**bold**", "<strong>bold</strong>", TEST_NOTE_CONFIG);
 

@@ -38,7 +38,7 @@ class BuildAccessorTest {
 	private static final GitRepo TEST_REPO = new GitRepo(TEST_USER.getUsername(), GitRepo.GitHost.GITLAB,
 			"Doraemon", "Everest", "main", UUID.randomUUID());
 	private static final Build TEST_BUILD = new Build(TEST_REPO.getRepoID(), TEST_REPO.getBranch(),
-			"cab3b4d254bfafa74f0641b05761882921e5b435", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
+			"cab3b4d254bfafa74f0641b05761882921e5b435", "JonSnow", OffsetDateTime.now(), Build.BuildStatus.SUCCESS);
 
 	@BeforeAll
 	static void setUp() {
@@ -64,7 +64,7 @@ class BuildAccessorTest {
 	@Order(3)
 	void update() {
 		Build updatedBuild = new Build(TEST_REPO.getRepoID(), "feature-x",
-				"6cbee4d3d40978096a2b8c5f43466842a99e3af0", OffsetDateTime.now(), Build.BuildStatus.RUNTIME_ERROR);
+				"6cbee4d3d40978096a2b8c5f43466842a99e3af0", "DanyTargaryen", OffsetDateTime.now(), Build.BuildStatus.RUNTIME_ERROR);
 		assertTrue(BUILD_ACCESSOR.update(TEST_BUILD.getBuildID(), updatedBuild));
 
 		Optional<Build> buildWrapper = BUILD_ACCESSOR.read(TEST_BUILD.getBuildID());

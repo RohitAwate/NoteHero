@@ -42,7 +42,7 @@ class IngestionControllerTest {
 	private static final UserAccessor USER_ACCESSOR = new UserAccessor();
 	private static final GitRepoAccessor REPO_ACCESSOR = new GitRepoAccessor();
 
-	private static final User TEST_USER = new User("yfmtest", "yfmtest@test.com", "pass123", Tier.FREE);
+	private static final User TEST_USER = new User("IngestionControllerTest", "ingestioncontrollertest@test.com", "pass123", Tier.FREE);
 	private static final GitRepo TEST_REPO = new GitRepo(TEST_USER.getUsername(), GitRepo.GitHost.GITLAB,
 			"Chandler", "Everest", "main", UUID.randomUUID());
 	private static final Build TEST_BUILD = new Build(TEST_REPO.getRepoID(), "main",

@@ -53,7 +53,7 @@ class MarkdownRenderer implements NoteRenderer {
 		if (renderedNote != null) return renderedNote;
 
 		// First process the YAML Front Matter
-		ConfigProcessor configProcessor = ConfigProcessorFactory.get("yaml", filePath, noteSource, controller);
+		ConfigProcessor configProcessor = ConfigProcessorFactory.get("yaml", noteSource, filePath, controller);
 		if (configProcessor == null) {
 			controller.getLogger().logError("Could not produce ConfigProcessor for YAML Front Matter");
 			return "";

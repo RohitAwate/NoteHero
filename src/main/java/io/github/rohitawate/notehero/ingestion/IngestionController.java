@@ -16,8 +16,12 @@
 
 package io.github.rohitawate.notehero.ingestion;
 
+import io.github.rohitawate.notehero.database.BuildAccessor;
+import io.github.rohitawate.notehero.database.NoteAccessor;
+import io.github.rohitawate.notehero.database.Transaction;
 import io.github.rohitawate.notehero.logging.Log;
 import io.github.rohitawate.notehero.logging.Logger;
+import io.github.rohitawate.notehero.models.Build;
 import io.github.rohitawate.notehero.models.Note;
 import io.github.rohitawate.notehero.renderer.NoteRenderer;
 import io.github.rohitawate.notehero.renderer.NoteRendererFactory;
@@ -26,16 +30,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 public class IngestionController {
 	final Logger logger = new Logger(Log.Level.WARNING);
 
+	private final Build build;
 	private final List<String> candidateFilePaths;
 
-	public IngestionController(List<String> candidateFilePaths) {
+	private final Transaction transaction = new Transaction();
+	private final NoteAccessor noteAccessor = new NoteAccessor();
+
+	public IngestionController(Build build, List<String> candidateFilePaths) {
+		this.build = build;
 		this.candidateFilePaths = candidateFilePaths;
+
+		new BuildAccessor().create(build);
+
+		this.transaction.addAccessor(noteAccessor);
 	}
 
 	public void ingestAll() {
@@ -55,11 +69,19 @@ public class IngestionController {
 
 			try {
 				notes[i] = processNote(readNoteFromDisk(currentPath), currentPath);
+				noteAccessor.create(notes[i]);
 			} catch (IOException e) {
 				logger.logWarning("Error while reading file: " + currentPath);
 			} catch (IllegalArgumentException e) {
 				logger.logError(e.getMessage());
 			}
+		}
+
+		try {
+			transaction.commit();
+		} catch (SQLException e) {
+			logger.logError("Failed to save built notes.");
+			e.printStackTrace();
 		}
 	}
 
@@ -71,9 +93,6 @@ public class IngestionController {
 			logger.logWarning(e.getMessage());
 			throw new IllegalArgumentException("Could not process note: " + filePath);
 		}
-
-		// TODO: Replace with actual values
-		return new Note(UUID.randomUUID(), noteSource, renderer.render(), renderer.getConfig());
 	}
 
 	private String readNoteFromDisk(String filePath) throws IOException {

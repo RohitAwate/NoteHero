@@ -167,13 +167,14 @@ public enum CaseFormat {
 
 	/**
 	 * Identifies the case format of the string.
+	 * The precedence of case formats is as follows:
+	 * TITLE > SNAKE > HYPHENATED > CAMEL
 	 *
 	 * @param source Candidate string
 	 * @return The case format of the string
 	 */
 	public static CaseFormat identifyCaseFormat(String source) {
-		// assumption
-		if (source.isEmpty()) return LOWER_CAMEL;
+		if (source.isEmpty()) throw new IllegalArgumentException("Empty string");
 
 		source = source.trim();
 
@@ -208,13 +209,27 @@ public enum CaseFormat {
 					return CaseFormat.UPPER_HYPHENATED;
 			}
 		} else {
-			boolean isFirstUpper = Character.isUpperCase(source.codePointAt(0));
-			return isFirstUpper ? CaseFormat.UPPER_CAMEL : CaseFormat.LOWER_CAMEL;
+			/*
+				 We are definitely looking at a camel case string.
+				 We need to determine if it is upper or lower camel case.
+				 We could look at the first character's case but it can be non-alphabetic.
+				 eg: 121WebHosting
+
+				 Hence, we first traverse to the first alphabetic character (if available)
+				 and check its case to determine that of the full string.
+			*/
+			int i = 0;
+			while (i < source.length() && !Character.isAlphabetic(source.charAt(i))) i++;
+
+			if (i == source.length()) {
+				throw new IllegalArgumentException("Unknown CaseFormat: " + source);
+			}
+
+			boolean isUpper = Character.isUpperCase(source.codePointAt(i));
+			return isUpper ? CaseFormat.UPPER_CAMEL : CaseFormat.LOWER_CAMEL;
 		}
 
-		// assumption
-		Logger.getGlobal().warning("Unknown CaseFormat: " + source);
-		return LOWER_CAMEL;
+		throw new IllegalArgumentException("Unknown CaseFormat: " + source);
 	}
 
 	/**

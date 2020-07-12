@@ -18,10 +18,56 @@ package io.github.rohitawate.notehero.text;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CaseFormatTest {
+
+	@Test
+	void identifyCaseFormat() {
+		// UpperCamelCase and lowerCamelCase
+		assertEquals(CaseFormat.LOWER_CAMEL, CaseFormat.identifyCaseFormat("makingPBJSandwichIn10Minutes"));
+		assertEquals(CaseFormat.LOWER_CAMEL, CaseFormat.identifyCaseFormat("aStudyInPink"));
+		assertEquals(CaseFormat.LOWER_CAMEL, CaseFormat.identifyCaseFormat("appMarket"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("AStudyInPink    "));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("IIFAMagic"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("IAmBatman"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("BuildingACanoe"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("AmIIFA"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("MP4"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("BigHero6"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("USA12CitiesTour"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("121WebHosting"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("Java8Tutorial"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("PS4Tutorial"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("Java11Tutorial"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("D23"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("Jan15"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("ID3T"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("TC39"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("SLF4J"));
+		assertEquals(CaseFormat.UPPER_CAMEL, CaseFormat.identifyCaseFormat("1Direction"));
+
+		// UPPER_SNAKE_CASE and lower_snake_case
+		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("building_a_canoe"));
+		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("something__weird"));
+		assertEquals(CaseFormat.LOWER_SNAKE, CaseFormat.identifyCaseFormat("_______classic_123_"));
+		assertEquals(CaseFormat.UPPER_SNAKE, CaseFormat.identifyCaseFormat("KASA_KAY_PUNE   "));
+		assertEquals(CaseFormat.MIXED_SNAKE, CaseFormat.identifyCaseFormat("__AVENGERS_2_AgeOfUltron_"));
+		assertEquals(CaseFormat.MIXED_SNAKE, CaseFormat.identifyCaseFormat("--AVENGERS-2-Age-OF_ULTRON-"));
+
+		// UPPER_HYPHENATED_CASE and lower_hyphen_case
+		assertEquals(CaseFormat.LOWER_HYPHENATED, CaseFormat.identifyCaseFormat("building-a-canoe"));
+		assertEquals(CaseFormat.LOWER_HYPHENATED, CaseFormat.identifyCaseFormat("something--weird"));
+		assertEquals(CaseFormat.LOWER_HYPHENATED, CaseFormat.identifyCaseFormat("-------classic-123-"));
+		assertEquals(CaseFormat.UPPER_HYPHENATED, CaseFormat.identifyCaseFormat("KASA-KAY-PUNE  "));
+
+		// Title Case
+		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("Building     a Canoe"));
+		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("  Hello world"));
+		assertEquals(CaseFormat.TITLE, CaseFormat.identifyCaseFormat("  leading and trailing spaces   "));
+
+		// TODO: Non-alphabetic (just numbers, special characters or a mixture of both)
+	}
 
 	@Test
 	void tokenize() {
@@ -60,12 +106,14 @@ class CaseFormatTest {
 		assertArrayEquals(new String[]{"something", "weird"}, CaseFormat.tokenize("something--weird", CaseFormat.LOWER_HYPHENATED));
 		assertArrayEquals(new String[]{"classic", "123"}, CaseFormat.tokenize("-------classic-123-", CaseFormat.LOWER_HYPHENATED));
 		assertArrayEquals(new String[]{"KASA", "KAY", "PUNE"}, CaseFormat.tokenize("KASA-KAY-PUNE  ", CaseFormat.UPPER_HYPHENATED));
-		assertArrayEquals(new String[]{"AVENGERS", "2", "Age", "OF_ULTRON"}, CaseFormat.tokenize("--AVENGERS-2-Age-OF_ULTRON-", CaseFormat.MIXED_HYPHENATED));
 
 		// Title Case
 		assertArrayEquals(new String[]{"Building", "a", "Canoe"}, CaseFormat.tokenize("Building     a Canoe", CaseFormat.TITLE));
 		assertArrayEquals(new String[]{"Hello", "world"}, CaseFormat.tokenize("  Hello world", CaseFormat.TITLE));
 		assertArrayEquals(new String[]{"leading", "and", "trailing", "spaces"}, CaseFormat.tokenize("  leading and trailing spaces   ", CaseFormat.TITLE));
+
+		// Mixed cases to check precedence
+		assertArrayEquals(new String[]{"AVENGERS", "2", "Age", "OF_ULTRON"}, CaseFormat.tokenize("--AVENGERS-2-Age-OF_ULTRON-", CaseFormat.MIXED_HYPHENATED));
 	}
 
 	@Test
@@ -109,5 +157,15 @@ class CaseFormatTest {
 		assertEquals("I-AM-GOING-TO-D23", CaseFormat.convertTo("i_aM_goIng_tO_d23", CaseFormat.UPPER_HYPHENATED));
 		assertEquals("i-am-going-to-d23", CaseFormat.convertTo("i am going to d23", CaseFormat.LOWER_HYPHENATED));
 		assertEquals("i-am-going-to-d23", CaseFormat.convertTo("i-am-going-to-d23", CaseFormat.MIXED_HYPHENATED));
+	}
+
+	@Test
+	void equalAcrossFormats() {
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "linear regression"));
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "linear-regression"));
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "linear_regression"));
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "LinearRegression"));
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "linearRegression"));
+		assertTrue(CaseFormat.equalAcrossFormats("Linear Regression", "linear regression"));
 	}
 }

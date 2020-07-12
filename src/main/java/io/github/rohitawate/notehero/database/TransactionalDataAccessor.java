@@ -21,14 +21,28 @@ import java.sql.SQLException;
 
 abstract class TransactionalDataAccessor<T, PK> implements DataAccessor<T, PK> {
 	private Connection connection;
+	private boolean transactional;
 
-	void setConnection(Connection connection) {
+	void initTransactionMode(Connection connection) {
 		this.connection = connection;
+		this.transactional = true;
+	}
+
+	void exitTransactionMode() {
+		this.connection = null;
+		this.transactional = true;
+	}
+
+	void returnConnection() {
+		if (transactional) return;
+
+		PostgresPool.returnConnection(this.connection);
+		this.connection = null;
 	}
 
 	Connection getConnection() throws SQLException {
-		if (connection == null) {
-			return PostgresPool.getConnection();
+		if (this.connection == null) {
+			this.connection = PostgresPool.getConnection();
 		}
 
 		return connection;

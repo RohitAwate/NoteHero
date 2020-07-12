@@ -26,11 +26,8 @@ import java.util.UUID;
 public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 	@Override
 	public boolean create(Note note) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
-
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Notes (NoteID, BuildID, HTML, Markdown, Title, Private, Slug, Categories) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 			statement.setObject(1, note.noteID, Types.OTHER);
 			statement.setObject(2, note.buildID, Types.OTHER);
@@ -45,7 +42,7 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 			logger.logError("Error while creating new note: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -53,10 +50,8 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 
 	@Override
 	public Optional<Note> read(UUID noteID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM Notes WHERE NoteID=?");
 			statement.setObject(1, noteID, Types.OTHER);
 			ResultSet result = statement.executeQuery();
@@ -83,7 +78,7 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 			logger.logError("Error while reading note: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return Optional.empty();
@@ -91,12 +86,9 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 
 	@Override
 	public boolean update(UUID noteID, Note note) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement;
-
 			statement = conn.prepareStatement("UPDATE Notes SET Title=?, Private=?, Categories=? WHERE NoteID=?");
 			statement.setString(1, note.config.title);
 			statement.setBoolean(2, note.config.sudo);
@@ -108,7 +100,7 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 			logger.logError("Error while updating note: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -116,10 +108,8 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 
 	@Override
 	public boolean delete(UUID noteID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Notes WHERE NoteID=?");
 			statement.setObject(1, noteID, Types.OTHER);
 			return statement.executeUpdate() == 1;
@@ -127,7 +117,7 @@ public class NoteAccessor extends TransactionalDataAccessor<Note, UUID> {
 			logger.logError("Error while deleting note: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;

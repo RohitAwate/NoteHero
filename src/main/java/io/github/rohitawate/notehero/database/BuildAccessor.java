@@ -26,11 +26,8 @@ import java.util.UUID;
 public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 	@Override
 	public boolean create(Build build) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
-
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO Builds (BuildID, RepoID, GitBranch, CommitHash, Committer, StartTime, Status) VALUES(?, ?, ?, ?, ?, ?, CAST(? AS BuildStatus))");
 			statement.setObject(1, build.getBuildID(), Types.OTHER);
 			statement.setObject(2, build.getRepoID(), Types.OTHER);
@@ -44,7 +41,7 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 			logger.logError("Error while creating new build: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -52,10 +49,8 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 
 	@Override
 	public Optional<Build> read(UUID buildID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM Builds WHERE BuildID=?");
 			statement.setObject(1, buildID, Types.OTHER);
 			ResultSet result = statement.executeQuery();
@@ -79,7 +74,7 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 			logger.logError("Error while reading build: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return Optional.empty();
@@ -87,12 +82,9 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 
 	@Override
 	public boolean update(UUID buildID, Build build) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement;
-
 			statement = conn.prepareStatement("UPDATE Builds SET StartTime=?, Status=CAST(? AS BuildStatus) WHERE BuildID=?");
 			statement.setObject(1, build.getStartTime());
 			statement.setString(2, build.getStatus().toString());
@@ -103,7 +95,7 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 			logger.logError("Error while updating build: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -111,10 +103,8 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 
 	@Override
 	public boolean delete(UUID buildID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM Builds WHERE BuildID=?");
 			statement.setObject(1, buildID, Types.OTHER);
 			return statement.executeUpdate() == 1;
@@ -122,7 +112,7 @@ public class BuildAccessor extends TransactionalDataAccessor<Build, UUID> {
 			logger.logError("Error while deleting build: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;

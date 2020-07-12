@@ -25,12 +25,9 @@ import java.util.UUID;
 public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 	@Override
 	public boolean create(GitRepo gitRepo) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("INSERT INTO GitRepos VALUES(?, ?, CAST(? AS GitHost), ?, ?, ?, ?)");
-
 			statement.setObject(1, gitRepo.getRepoID(), Types.OTHER);
 			statement.setString(2, gitRepo.getUsername());
 			statement.setString(3, gitRepo.getGitHost().toString());
@@ -43,7 +40,7 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 			logger.logError("Error while creating new repo: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -51,10 +48,8 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 
 	@Override
 	public Optional<GitRepo> read(UUID repoID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT * FROM GitRepos WHERE RepoID=?");
 			statement.setObject(1, repoID, Types.OTHER);
 			ResultSet result = statement.executeQuery();
@@ -78,7 +73,7 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 			logger.logError("Error while reading repo: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return Optional.empty();
@@ -86,12 +81,9 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 
 	@Override
 	public boolean update(UUID repoID, GitRepo gitRepo) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement;
-
 			statement = conn.prepareStatement("UPDATE GitRepos SET GitHost=CAST(? AS GitHost), HostUsername=?, RepoName=?, Branch=?, LatestBuildID=? WHERE RepoID=?");
 			statement.setString(1, gitRepo.getGitHost().toString());
 			statement.setString(2, gitRepo.getHostUsername());
@@ -105,7 +97,7 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 			logger.logError("Error while updating repo: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;
@@ -113,10 +105,8 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 
 	@Override
 	public boolean delete(UUID repoID) {
-		Connection conn = null;
-
 		try {
-			conn = getConnection();
+			Connection conn = getConnection();
 			PreparedStatement statement = conn.prepareStatement("DELETE FROM GitRepos WHERE RepoID=?");
 			statement.setObject(1, repoID, Types.OTHER);
 			return statement.executeUpdate() == 1;
@@ -124,7 +114,7 @@ public class GitRepoAccessor extends TransactionalDataAccessor<GitRepo, UUID> {
 			logger.logError("Error while deleting repo: ");
 			e.printStackTrace();
 		} finally {
-			PostgresPool.returnConnection(conn);
+			returnConnection();
 		}
 
 		return false;

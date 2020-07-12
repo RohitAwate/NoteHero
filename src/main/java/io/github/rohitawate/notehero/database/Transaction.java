@@ -21,10 +21,14 @@ import io.github.rohitawate.notehero.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Transaction {
 	private Connection connection;
 	private Logger logger = new Logger(Log.Level.WARNING);    // TODO: Use default global logger
+
+	private final List<TransactionalDataAccessor<?, ?>> accessors = new ArrayList<>();
 
 	public Transaction() {
 		try {
@@ -42,11 +46,13 @@ public class Transaction {
 			return;
 		}
 
-		accessor.setConnection(connection);
+		accessor.initTransactionMode(connection);
+		accessors.add(accessor);
 	}
 
 	public void commit() throws SQLException {
 		connection.commit();
+		end();
 	}
 
 	public void rollback() throws SQLException {
@@ -57,5 +63,11 @@ public class Transaction {
 		connection.setAutoCommit(true);
 		PostgresPool.returnConnection(connection);
 		this.connection = null;
+
+		for (TransactionalDataAccessor<?, ?> accessor : accessors) {
+			accessor.exitTransactionMode();
+		}
+
+		accessors.clear();
 	}
 }

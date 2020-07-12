@@ -18,6 +18,7 @@ package io.github.rohitawate.notehero.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import io.github.rohitawate.notehero.logging.Log;
 import io.github.rohitawate.notehero.logging.Logger;
 
@@ -57,6 +58,12 @@ public class PostgresPool {
 
 	public static Connection getConnection() throws SQLException {
 		return dataSource.getConnection();
+	}
+
+	private static void printStats() {
+		HikariPoolMXBean bean = dataSource.getHikariPoolMXBean();
+		System.out.printf("idle: %d; active: %d; total: %d\n", bean.getIdleConnections(),
+				bean.getActiveConnections(), bean.getTotalConnections());
 	}
 
 	public static void returnConnection(Connection conn) {

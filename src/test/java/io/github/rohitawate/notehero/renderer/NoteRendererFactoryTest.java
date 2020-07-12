@@ -36,7 +36,7 @@ class NoteRendererFactoryTest {
 		assertNotNull(NoteRendererFactory.get("", ".mkd", null));
 		assertEquals(MarkdownRenderer.class, NoteRendererFactory.get("", ".mkd", null).getClass());
 
-		assertNull(NoteRendererFactory.get("", ".txt", null));
-		assertNull(NoteRendererFactory.get("", "", null));
+		assertThrows(IllegalArgumentException.class, () -> NoteRendererFactory.get("", ".txt", null));
+		assertThrows(IllegalArgumentException.class, () -> NoteRendererFactory.get("", "", null));
 	}
 }

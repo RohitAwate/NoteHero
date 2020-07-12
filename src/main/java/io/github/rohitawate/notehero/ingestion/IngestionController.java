@@ -57,16 +57,19 @@ public class IngestionController {
 				notes[i] = processNote(readNoteFromDisk(currentPath), currentPath);
 			} catch (IOException e) {
 				logger.logWarning("Error while reading file: " + currentPath);
+			} catch (IllegalArgumentException e) {
+				logger.logError(e.getMessage());
 			}
 		}
 	}
 
 	private Note processNote(String noteSource, String filePath) {
-		NoteRenderer renderer = NoteRendererFactory.get(noteSource, filePath, this);
-
-		if (renderer == null) {
-			logger.logError("Unknown file format: " + filePath);
-			return null;
+		try {
+			NoteRenderer renderer = NoteRendererFactory.get(noteSource, filePath, this);
+			return new Note(UUID.randomUUID(), build.getBuildID(), noteSource, renderer.render(), renderer.getConfig());
+		} catch (IllegalArgumentException e) {
+			logger.logWarning(e.getMessage());
+			throw new IllegalArgumentException("Could not process note: " + filePath);
 		}
 
 		// TODO: Replace with actual values

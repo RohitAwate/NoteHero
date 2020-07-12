@@ -27,7 +27,7 @@ public class NoteRendererFactory {
 		if (fileName.endsWith(".md") || fileName.endsWith(".markdown") || fileName.endsWith(".mdown") || fileName.endsWith(".mkd")) {
 			return new MarkdownRenderer(noteSource, filePath, controller);
 		} else {
-			return null;
+			throw new IllegalArgumentException("No renderer for file format: " + filePath);
 		}
 	}
 }

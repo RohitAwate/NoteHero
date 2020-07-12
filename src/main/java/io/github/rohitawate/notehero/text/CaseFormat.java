@@ -40,7 +40,7 @@ public enum CaseFormat {
 	UPPER_HYPHENATED,   // FOO-BAR,
 	LOWER_HYPHENATED,   // foo-bar
 	MIXED_HYPHENATED,   // fOo-BaR
-	TITLE;              // foo bar
+	TITLE;              // Foo Bar
 
 	private static Set<String> englishStopWords;
 
@@ -156,6 +156,27 @@ public enum CaseFormat {
 		}
 
 		return builder.toString();
+	}
+
+	/**
+	 * Compares the two strings for equality in a CaseFormat-agnostic fashion.
+	 * For example, "linear-regression" and "LinearRegression" will be deemed equal
+	 * as they constitute the same words written in different case formats.
+	 *
+	 * @return true if equal, false otherwise
+	 */
+	public static boolean equalAcrossFormats(String s1, String s2) {
+		String[] tokens1 = tokenize(s1, identifyCaseFormat(s1));
+		for (int i = 0; i < tokens1.length; i++) {
+			tokens1[i] = tokens1[i].toLowerCase();
+		}
+
+		String[] tokens2 = tokenize(s2, identifyCaseFormat(s2));
+		for (int i = 0; i < tokens2.length; i++) {
+			tokens2[i] = tokens2[i].toLowerCase();
+		}
+
+		return Arrays.equals(tokens1, tokens2);
 	}
 
 	private static void loadEnglishStopWords() throws IOException, URISyntaxException {
@@ -287,7 +308,6 @@ public enum CaseFormat {
 		return tokenizeCamelCase(source);
 	}
 
-
 	/**
 	 * Delegate for tokenize.
 	 * <p>
@@ -309,7 +329,7 @@ public enum CaseFormat {
 		*/
 
 		source = source
-				// aStudyInPink -> a Study InPink
+				// aStudyInPink -> a Study In Pink
 				.replaceAll("([a-z])([A-Z][a-z])", "$1 $2")
 
 				// makingPBJQuickly -> making PBJ Quickly
@@ -318,10 +338,14 @@ public enum CaseFormat {
 				// InBengal -> In Bengal
 				.replaceAll("([A-Z][a-z])([A-Z])", "$1 $2")
 
+				// (When single letter words 'A' and 'I' appear in the middle)
 				// BuildingACanoe -> Building A Canoe
+				// ForIAmBatman -> For I Am Batman
 				.replaceAll("([a-z])([AI])([A-Z][a-z])", "$1 $2 $3")
 
+				// (When single letter words 'A' and 'I' appear at the start)
 				// AStudy -> A Study
+				// IAmBatman -> I Am Batman
 				.replaceAll("([AI])([A-Z][a-z])", "$1 $2")
 
 				// BigHero6 -> Big Hero 6
